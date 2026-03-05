@@ -5,6 +5,7 @@ import numpy as np
 
 
 def qsimpy_env_creator(env_config):
+    print("------------------------------------------------------------------Env creator called")
     dataset = env_config.pop("dataset", None)
     config = env_config.pop("config", None)
     config = config if config is not None else {}
@@ -14,14 +15,14 @@ def qsimpy_env_creator(env_config):
     obs_filter = env_config.pop("obs_filter", None)
     reward_filter = env_config.pop("reward_filter", None)
 
-    if obs_filter is not None:
-        if obs_filter == "rescale_-1_1":
-            env = RescaleObservationV0(
-                env=env,
-                min_obs=np.ones((env.obs_dim,), dtype=np.float32) * -1,
-                max_obs=np.ones((env.obs_dim,), dtype=np.float32) * 1,
-            )
-            env = DtypeObservationV0(env, dtype=np.float32)
+    # if obs_filter is not None:
+        # if obs_filter == "rescale_-1_1":
+        #     env = RescaleObservationV0(
+        #         env=env,
+        #         min_obs=np.ones((env.obs_dim,), dtype=np.float32) * -1,
+        #         max_obs=np.ones((env.obs_dim,), dtype=np.float32) * 1,
+        #     )
+        #     env = DtypeObservationV0(env, dtype=np.float32)
 
     if reward_filter is not None:
         if reward_filter == "scale_2x":

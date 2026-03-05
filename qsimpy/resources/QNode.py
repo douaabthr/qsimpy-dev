@@ -16,6 +16,8 @@ class QNode(simpy.Resource):
         - quantum_volume (int): The quantum volume of the quantum node.
         - clops (int): The clops of the quantum node.
         - d1cps (int): The deep-1 circuit operation per second of the quantum node.
+        # La vitesse de la machine.
+        La vitesse de la machine.
         - env (simpy.Environment): The simulation environment.
         - waiting_tasks (list): The list of tasks waiting to be executed on the quantum node.
         - current_tasks (dict): The dictionary of tasks currently being executed on the quantum node.
@@ -110,7 +112,7 @@ class QNode(simpy.Resource):
             self.env.now, f"✅ QNode {self.id} finished executing QTask {task.id}"
         )
         self.completed_tasks.append(task)
-
+#  done copie le circuit dans qtask_self.circuit_transpile car il sagit d'une simulation transition non necessire 
     def simulate_task(self, task):
         transpiled_cl = task.qtask_data[self.qnode_model]["depth"]  # TODO: + 100k just for testing, remove for production
         Log.print_success(
@@ -119,7 +121,8 @@ class QNode(simpy.Resource):
         self.completed_tasks.append(task)
         task.set_status(TaskStatus.DONE)
         return transpiled_cl
-
+    #  transalati le circuit theorique en un circuit real executable d'une dta set 
+    # done 
     def emulate_task(self, task):
         algo = task.qtask_data["algorithm"]
         qubit = task.qubit_number
@@ -163,7 +166,7 @@ class QNode(simpy.Resource):
             Log.print_error(f"No matching QASM file found for task {task.id}")
             task.set_status(TaskStatus.ERROR)
             return None
-
+# done 
     def transpile_task(self, task, mode: str):
         """
         Transpile a quantum task directly using QASM file or used pre-transpiled data from qtask_data
@@ -189,14 +192,14 @@ class QNode(simpy.Resource):
             execution_time = self.get_estimated_execution_time(task,self.mode)
             waiting_queue.append((task.id, execution_time))
         return waiting_queue
-
+# done 
     def get_estimated_execution_time(self, task, mode="simulate"):
         """Get the estimated execution time for a task."""
         if mode=="simulate":
             return (task.get_circuit_layers() / self.d1cps) * task.shots
         elif mode=="emulate":
             return task.execution_time
-
+    #done 
     def get_estimated_waiting_time(self, qtask, mode="simulate"):
         """Get the estimated waiting time for the quantum node."""
         if self.next_available_time > qtask.arrival_time:

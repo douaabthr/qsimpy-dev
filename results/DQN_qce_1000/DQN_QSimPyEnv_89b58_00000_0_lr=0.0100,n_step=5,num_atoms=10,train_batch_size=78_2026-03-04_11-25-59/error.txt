@@ -1,0 +1,95 @@
+Failure # 1 (occurred at 2026-03-04_11-26-15)
+The actor died because of an error raised in its creation task, [36mray::DQN.__init__()[39m (pid=27632, ip=127.0.0.1, actor_id=61ad9a5c76bbee1a480fcb0601000000, repr=DQN)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 307, in reset
+    self.generate_qtasks()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 219, in generate_qtasks
+    qtasks = self.qtask_dataset.get_subset_data(self.round)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 116, in get_subset_data
+    self.load_data_pd(self.filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 15, in load_data_pd
+    self.df = pd.read_csv(filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\common.py", line 873, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\Study\\Master\\master2\\semstre3\\PFE\\qsimpy\\qsimpy\\qdataset\\qsimpyds_1000_sub_26.csv'
+
+The above exception was the direct cause of the following exception:
+
+[36mray::DQN.__init__()[39m (pid=27632, ip=127.0.0.1, actor_id=61ad9a5c76bbee1a480fcb0601000000, repr=DQN)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 85, in check_env
+    check_gym_environments(env, AlgorithmConfig() if config is None else config)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 179, in check_gym_environments
+    raise ValueError(
+ValueError: Your gymnasium.Env's `reset()` method raised an Exception!
+
+During handling of the above exception, another exception occurred:
+
+[36mray::DQN.__init__()[39m (pid=27632, ip=127.0.0.1, actor_id=61ad9a5c76bbee1a480fcb0601000000, repr=DQN)
+  File "python\ray\_raylet.pyx", line 1418, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1498, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1424, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1364, in ray._raylet.execute_task.function_executor
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\_private\function_manager.py", line 726, in actor_method_executor
+    return method(__ray_actor, *args, **kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\deprecation.py", line 106, in patched_init
+    return obj_init(*args, **kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 517, in __init__
+    super().__init__(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\tune\trainable\trainable.py", line 169, in __init__
+    self.setup(copy.deepcopy(self.config))
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 639, in setup
+    self.workers = WorkerSet(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\worker_set.py", line 157, in __init__
+    self._setup(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\worker_set.py", line 247, in _setup
+    self._local_worker = self._make_worker(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\worker_set.py", line 925, in _make_worker
+    worker = cls(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\rollout_worker.py", line 404, in __init__
+    check_env(self.env, self.config)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 96, in check_env
+    raise ValueError(
+ValueError: Traceback (most recent call last):
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 177, in check_gym_environments
+    env.reset()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 307, in reset
+    self.generate_qtasks()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 219, in generate_qtasks
+    qtasks = self.qtask_dataset.get_subset_data(self.round)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 116, in get_subset_data
+    self.load_data_pd(self.filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 15, in load_data_pd
+    self.df = pd.read_csv(filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\common.py", line 873, in get_handle
+    handle = open(
+FileNotFoundError: [Errno 2] No such file or directory: 'D:\\Study\\Master\\master2\\semstre3\\PFE\\qsimpy\\qsimpy\\qdataset\\qsimpyds_1000_sub_26.csv'
+
+The above exception was the direct cause of the following exception:
+
+[36mray::DQN.__init__()[39m (pid=27632, ip=127.0.0.1, actor_id=61ad9a5c76bbee1a480fcb0601000000, repr=DQN)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 85, in check_env
+    check_gym_environments(env, AlgorithmConfig() if config is None else config)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\utils\pre_checks\env.py", line 179, in check_gym_environments
+    raise ValueError(
+ValueError: Your gymnasium.Env's `reset()` method raised an Exception!
+
+The above error has been found in your environment! We've added a module for checking your custom environments. It may cause your experiment to fail if your environment is not set up correctly. You can disable this behavior via calling `config.environment(disable_env_checking=True)`. You can run the environment checking module standalone by calling ray.rllib.utils.check_env([your env]).

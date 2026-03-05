@@ -53,7 +53,7 @@ ibmq_systems = {
     "quito": {"qubits": 5, "qv": 16, "clops": 1500},
 }
 
-
+# done
 def create_ibmq_node(env, id: int, backend_name: str):
     """
     Create an IBMQ node.
@@ -66,9 +66,9 @@ def create_ibmq_node(env, id: int, backend_name: str):
     ibmq_node = QNode(env, id=id)
     node_metrics = ibmq_systems[backend_name]
     node_instance = get_ibmq_backend(backend_name)
-    ibmq_node.qubit_number = node_metrics["qubits"]
-    ibmq_node.quantum_volume = node_metrics["qv"]
-    ibmq_node.clops = node_metrics["clops"]
+    ibmq_node.qubit_number = node_metrics["qubits"] # done 
+    ibmq_node.quantum_volume = node_metrics["qv"] # done
+    ibmq_node.clops = node_metrics["clops"] # done 
     ibmq_node.d1cps = ibmq_node.clops * 19.95
     ibmq_node.qiskit_backend = node_instance
     ibmq_node.qnode_name = "ibm_" + backend_name

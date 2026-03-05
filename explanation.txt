@@ -1,0 +1,40 @@
+SimPy est une bibliothèque Python pour :
+
+modéliser des processus
+
+gérer des files d’attente
+
+simuler des ressources
+
+gérer des événements dans le temps
+------------------------------------------
+QSimPy ne simule pas la mécanique quantique comme Qiskit.
+Il simule :
+l’infrastructure autour du système quantique.
+-----------------------------------------------
+qsimpy : simulation à événements discrets signifie 
+
+Le temps n’avance que lorsqu’un événement important se produit.
+Il ne coule pas en continu.
+Le temps saute directement
+-------------------------------------------------
+C’est quoi Gymnasium:
+créer des environnements d’apprentissage
+
+entraîner des agents en Reinforcement Learning (RL)
+
+C’est la version moderne de OpenAI Gym.
+
+Elle fonctionne comme ça :
+
+L’agent observe un état
+
+Il choisit une action
+
+Il reçoit une récompense
+
+Il apprend à maximiser cette récompense
+-----------------------------------------------
+Learning-Centric Environment:
+QSimPy est conçu surtout pour apprendre et expérimenter,
+pas seulement pour faire une simulation industrielle réelle. C’est un environnement pédagogique.

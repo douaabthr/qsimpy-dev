@@ -1,13 +1,15 @@
 import argparse
-
+#  framework pour calcul distribué
 import ray
 from ray import tune, air, train
+# enregistre ton environnement personnalisé
 from ray.tune.registry import register_env
 from env_creator import qsimpy_env_creator
 from ray.rllib.algorithms.dqn import DQNConfig
 from ray.rllib.utils.framework import try_import_tf
 from ray.tune.analysis import ExperimentAnalysis
 import os
+from ray.air import CheckpointConfig
 
 tf1, tf, tfv = try_import_tf()
 parser = argparse.ArgumentParser()
@@ -22,8 +24,9 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--stop-iters", type=int, default=100, help="Number of iterations to train."
+    "--stop-iters", type=int, default=1, help="Number of iterations to train."
 )
+# Un timestep = une action de l’agent dans l’environnement.
 parser.add_argument(
     "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # ray.init(num_cpus=args.num_cpus or None)
-
+    #  on mentionne quel env personalisse et ray va cree selon la methode "qsimpy_env_creator"
     register_env("QSimPyEnv", qsimpy_env_creator)
 
     replay_config = {
@@ -44,18 +47,21 @@ if __name__ == "__main__":
     }
 
     config = (
-        DQNConfig()
+        DQNConfig().rollouts(num_rollout_workers=0)
         .framework(framework=args.framework)
         .environment(
             env="QSimPyEnv",
             env_config={
                 "obs_filter": "rescale_-1_1",
                 "reward_filter": None,
-                "dataset": "qdataset/qsimpyds_1000_sub_26.csv",
+                "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qdataset\qsimpyds_1000_sub_26.csv",
             },
+            
         )
+        # 0 workers → tout se fait sur le process principal
         .training(
             lr=tune.grid_search([0.01]),
+            # le réseau s’entraîne sur 78 transitions tirées du replay buffer.
             train_batch_size=tune.grid_search([78]),
             replay_buffer_config=replay_config,
             num_atoms=tune.grid_search(
@@ -68,7 +74,6 @@ if __name__ == "__main__":
             v_min=-10.0,
             v_max=10.0,
         )
-        .rollouts(num_rollout_workers=8)
     )
 
     stop_config = {
@@ -83,14 +88,14 @@ if __name__ == "__main__":
     result_directory = os.path.join(current_directory, "results")
 
     # Create the storage_path with the "file://" scheme
-    storage_path = f"file://{result_directory}"
-
+    storage_path = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\results"
+#  debut de l'entrainement
     results = tune.Tuner(
         "DQN",
         run_config=air.RunConfig(
             stop=stop_config,
             # Save checkpoints every 10 iterations.
-            checkpoint_config=train.CheckpointConfig(checkpoint_frequency=10),
+            checkpoint_config=CheckpointConfig(checkpoint_frequency=10),
             storage_path=storage_path, 
             name="DQN_QCE_1000"
         ),

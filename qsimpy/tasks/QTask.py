@@ -10,7 +10,7 @@ class QTask:
         - circuit_layers (int): The number of layers in the quantum circuit.
         - status (TaskStatus): The status of the quantum task.
     """
-
+#    all attribute is clear 
     def __init__(
         self,
         id: None,
@@ -71,17 +71,17 @@ class QTask:
         self.error = None
         self.shots = shots
         self.rescheduling_count = 0
-
+# done 
     def set_status(self, status):
         self.status = status
-
+#  done 
     def update_transpiled_circuit(self, transpiled_qc):
         """Update the transpiled circuit and its features (for QASM file inputs only)."""
         self.transpiled_circuit = transpiled_qc
         self.transpiled_circuit_layers = self.transpiled_circuit.depth()
         self.transpiled_gate_counts = self.transpiled_circuit.count_ops()
         return self.transpiled_circuit_layers, self.transpiled_gate_counts
-
+# done 
     def get_circuit_layers(self):
         if self.transpiled_circuit_layers is not None:
             return self.transpiled_circuit_layers

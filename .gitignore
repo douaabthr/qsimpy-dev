@@ -4,6 +4,7 @@
 __pycache__/
 
 # SimPy
+qsimpy_env/
 .env
 .env.bak
 .env.*.bak

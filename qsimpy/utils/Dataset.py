@@ -9,7 +9,7 @@ class Dataset:
         # self.load_data(filename)
         self.filename = filename
         
-
+    # done :  lire data set depuis csv 
     # Load data from csv file using pandas
     def load_data_pd(self, filename):
         self.df = pd.read_csv(filename)
@@ -109,7 +109,8 @@ class Dataset:
             # Index by algorithm and original_width
             key = (row["subset"], row["algorithm"], int(row["original_width"]))
             self.data[key] = formatted_data
-
+# Chaque épisode RL utilise un sous-ensemble différent.
+# done 
     def get_subset_data(self, subset_id):
         # Filter data by subset_id
         self.load_data_pd(self.filename)
