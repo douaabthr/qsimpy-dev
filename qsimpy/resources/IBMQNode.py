@@ -2,6 +2,7 @@ from typing import Optional
 from .QNode import QNode
 from qiskit_ibm_runtime.fake_provider import FakeProviderForBackendV2
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
+import json 
 
 provider = FakeProviderForBackendV2()
 
@@ -53,6 +54,7 @@ ibmq_systems = {
     "quito": {"qubits": 5, "qv": 16, "clops": 1500},
 }
 
+CALIBRATION_PATH = "./qsimpy/resources/backend_calibration_data.json"
 
 def create_ibmq_node(env, id: int, backend_name: str):
     """
@@ -63,15 +65,42 @@ def create_ibmq_node(env, id: int, backend_name: str):
     Returns:
         - ibmq_node (QNode): The created IBMQ node.
     """
+    with open(CALIBRATION_PATH, "r") as f:
+        calibration_data = json.load(f)
+
+    if backend_name not in calibration_data:
+        raise ValueError(f"Backend '{backend_name}' not found in calibration file.")
+
+    backend_data = calibration_data[backend_name]
+
+
+    system_info = backend_data["system_info"]
+
+    num_qubits = system_info.get("num_qubits")
+    quantum_volume = system_info.get("quantum_volume")
+    clops = system_info.get("clops")
+
+    # -------------------------
+    # Create Node
+    # -------------------------
     ibmq_node = QNode(env, id=id)
-    node_metrics = ibmq_systems[backend_name]
-    node_instance = get_ibmq_backend(backend_name)
-    ibmq_node.qubit_number = node_metrics["qubits"] # done 
-    ibmq_node.quantum_volume = node_metrics["qv"] # done
-    ibmq_node.clops = node_metrics["clops"] # done 
+
+    ibmq_node.qubit_number = num_qubits
+    ibmq_node.quantum_volume = quantum_volume
+    ibmq_node.clops = clops
+
+   
     ibmq_node.d1cps = ibmq_node.clops * 19.95
+
+
+    # node_metrics = ibmq_systems[backend_name]
+    node_instance = get_ibmq_backend(backend_name)
+    # ibmq_node.qubit_number = node_metrics["qubits"] # done 
+    # ibmq_node.quantum_volume = node_metrics["qv"] # done
+    # ibmq_node.clops = node_metrics["clops"] # done 
+    # ibmq_node.d1cps = ibmq_node.clops * 19.95
     ibmq_node.qiskit_backend = node_instance
     ibmq_node.qnode_name = "ibm_" + backend_name
     ibmq_node.qnode_model = "ibmq" + str(ibmq_node.qubit_number)
-    ibmq_node.error = ibmq_errors[backend_name]
+    ibmq_node.error = ibmq_errors[backend_name]    ## LAZEM NBDLOU HADI 
     return ibmq_node
