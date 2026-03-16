@@ -14,12 +14,7 @@ import simpy
 
 
 class QSimPyEnv(gym.Env):
-    # MAX_ROUNDS n’a rien à voir avec le nombre d’épisodes d’entraînement du RL. 
-    # C’est juste une limite interne à l’environnement de simulation pour que
-    #  la simulation ne tourne pas indéfiniment.
-    # MAX_ROUNDS n’a rien à voir avec le nombre d’épisodes d’entraînement du RL.
-    # C’est juste une limite interne à
-    # l’environnement de simulation pour que la simulation ne tourne pas indéfiniment.
+
     MAX_ROUNDS = 999  # maximum number of rounds in the QTask dataset
 
     """
@@ -107,10 +102,6 @@ class QSimPyEnv(gym.Env):
 )
         self.current_obs = None
 
-        # ACTION SPACE
-        #  L’action de l’agent : choisir sur quel nœud exécuter la tâche.
-
-        # Donc 5 actions possibles (0 à 4).
         self.action_space = Discrete(self.n_qnodes)
 
         # Load QTasks dataset
@@ -122,11 +113,8 @@ class QSimPyEnv(gym.Env):
         self.qsp_env = simpy.Environment()
         self.setup_quantum_resources()
 
-        # Round
-        # c’est le compteur du nombre de rounds ou cycles de simulation.
         self.round = 1
         self.seed = 22
-        # utilisé pour distribuer les tâches aux QNodes en rotation (méthode “round-robin”).
         self.round_robin_index = 0
         self.results = [] 
         
@@ -137,13 +125,7 @@ class QSimPyEnv(gym.Env):
         self.evaluation = config.get("evaluation", False)
         self.policy = config.get("policy", "UnknownPolicy")
         
-# Elle retourne un tableau NumPy contenant à la fois :
 
-# Les infos de la tâche actuelle (current_qtask).
-
-# Les infos de tous les QNodes.
-#  pour quoi ca : C’est exactement ce vecteur que ton DQN prend en entrée pour prédire quel QNode choisir.
-    #  done 
     def _get_obs(self):
         """
         Get the current observation of the environment.
@@ -172,7 +154,7 @@ class QSimPyEnv(gym.Env):
                 [
                     qnode.qubit_number,
                     qnode.clops,
-                    qnode.next_available_time, # le prochain moment où le QNode sera libre.
+                    qnode.next_available_time, 
                 ],
                 dtype=np.float32,
             )
@@ -185,31 +167,10 @@ class QSimPyEnv(gym.Env):
         )
         return self.current_obs
 
-#    done : cree les qnode dans ibm l'infrastrcture 
-# recupere tout les info lie au backend cad les devices quantique tel quel le nombre de qubit clps...
-#  et instancier le borcker
-# version old avec 5 qnode seulmenet  
-    # def setup_quantum_resources(self):
-    #     # Create a list of 10 IBM QNodes
-    #     qnode_ids = range(self.n_qnodes)
-    #     qnode_names = [
-    #         "washington",
-    #         "kolkata",
-    #         "hanoi",
-    #         "perth",
-    #         "lagos",
-    #     ]
-    #     self.qnodes = [
-    #         IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
-    #         for qid, qname in zip(qnode_ids, qnode_names)
-    #     ]
 
-    #     # Create a Broker
-    #     self.broker = Broker(self.qsp_env, self.qnodes, self.mode)
-    
-    #  version cree 40 qnode repartis sur les 5 qnode 
     def setup_quantum_resources(self):
-
+        # Create a list of 10 IBM QNodes
+        qnode_ids = range(self.n_qnodes)
         qnode_names = [
             "washington",
             "kolkata",
@@ -217,24 +178,16 @@ class QSimPyEnv(gym.Env):
             "perth",
             "lagos",
         ]
+        self.qnodes = [
+            IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
+            for qid, qname in zip(qnode_ids, qnode_names)
+        ]
 
-        self.qnodes = []
-
-        for qid in range(self.n_qnodes):
-            qname = qnode_names[qid % len(qnode_names)]
-
-            node = IBMQNode.create_ibmq_node(
-                self.qsp_env,
-                qid,
-                qname
-            )
-
-            self.qnodes.append(node)
-
+        # Create a Broker
         self.broker = Broker(self.qsp_env, self.qnodes, self.mode)
+    
 
-# initialisee tout les qtask ela hssab round nchargiw data set et 
-# nado arrival time ela hssab dat set wla arrival time suit un loi donnee
+
     def generate_qtasks(self):
         """Generate a list of QTasks from the QTask dataset, following Poisson distribution of arrival time."""
         # QTask IDs
@@ -276,11 +229,7 @@ class QSimPyEnv(gym.Env):
         self.round += 1
 
 
-# Reçoit un QNode choisi par l’agent (qnode_id)
-# Simule son placement
-# si aucun emplacement nest fourni par l'agent 
-# la strategies round robin et appliquer 
-#  done 
+
     def submit_task_to_qnode(self, qtask, qnode_id=None):
         reward = 0
         if qnode_id is None:
@@ -306,7 +255,6 @@ class QSimPyEnv(gym.Env):
             ):
                 index += 1
             self.qtasks.insert(index, qtask)
-            #  on penalise l'agent 
             return -0.1, qtask.rescheduling_count
         
         # Submit the qtask to the qnode following the action
@@ -336,8 +284,7 @@ class QSimPyEnv(gym.Env):
         info = {}
         return self.current_obs, info
     
-    # donne des statistique sur les reusltat comme waiting time de tout qtasks schant que tout ca d'un seul iteration ou bien round ou bien episode
-    # done
+
     def collect_results(self):
         Log.print_simulation_results(self.qnodes)
         """Collect and summarize results from the QTask executions."""
@@ -362,10 +309,7 @@ class QSimPyEnv(gym.Env):
             'avg_rescheduling_count': avg_rescheduling_count,
         }
         return summary
-#  cette methode permet de classe la tsk cournat au bon qnode selon la methode 
-# submit task to qnode 
-#  verfiy if there is next qtask if yes episode continue else stp 
-# done 
+
     def step(self, action):
         # Submit the current qtask to the selected qnode
         # action is qnode_id

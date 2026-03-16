@@ -20,9 +20,7 @@ class Broker:
     def time_until_task_arrival(self, qtask):
         """Return the time until the task's arrival time."""
         return max(0, qtask.arrival_time - self.env.now)
-
-    #  verfie si les contrainte demendi par qtask est verfier dans qnode choisi pas agnet sinon erreur 
-    #  done 
+ 
     def preprocess_qtask(self, qtask, qnode):
         # Check the constraints of the QTask
         qtask.qnode = qnode
@@ -45,10 +43,6 @@ class Broker:
                 qnode.failed_tasks.append(qtask)
         else:
             # If qiskit_backend is set, transpile the task
-            # Si le QNode utilise un backend Qiskit :
-
-            # On adapte le circuit à la machine.
-            # Transpiler = adapter le circuit aux contraintes matérielles
             if qnode.qiskit_backend:
                 qtask.circuit_layers = qnode.transpile_task(qtask,self.mode)
             # Get estimated waiting time and execution time
@@ -58,17 +52,11 @@ class Broker:
             qtask.execution_time = estimated_execution_time
         return qtask, estimated_waiting_time, estimated_execution_time
     
-    # Cette fonction simule l’exécution d’une tâche quantique sur un QNode. 
-    # elle simule le passage de temps 
-    #  la fonction simule le temps d'attent d'arrivee d'une tache 
-    #  a l'arrviee en verfie si qnode est dispo si le cas on simule le temps dexecution de la qtask
-    #  sinon qtask attent la libretie de qnode 
-    #  la fin on return le temps d'attent et temps d'executiion 
-    #  done 
+
     def submit_qtask_to_qnode(self, qtask, qnode):
         """Submit a quantum task to a quantum node."""
         # Wait for the task's arrival time
-        yield self.env.timeout(self.time_until_task_arrival(qtask)) #Pause ce processus jusqu'à ce que le temps passe
+        yield self.env.timeout(self.time_until_task_arrival(qtask))
         Log.print_with_current_time(
             self.env.now,
             f"🛫 QTask {qtask.id} arrived at Broker and will be submit to QNode {qnode.id} in {qtask.waiting_time}s",
@@ -87,7 +75,6 @@ class Broker:
         return qtask.waiting_time + qtask.execution_time
 
     # TODO: Check QTask constraints for execution on QNode
-    #  done verfier si le nomnbre de qubit required by this circuit is satisfied by this qnode else error 
     def check_qtask_constraints(self, qtask: QTask, qnode: QNode):
         errorcode = 0
         satisfied = True

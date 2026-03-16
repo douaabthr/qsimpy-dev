@@ -1,8 +1,6 @@
 import argparse
-#  framework pour calcul distribué
 import ray
 from ray import tune, air, train
-# enregistre ton environnement personnalisé
 from ray.tune.registry import register_env
 from env_creator import qsimpy_env_creator
 from ray.rllib.algorithms.dqn import DQNConfig
@@ -24,9 +22,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--stop-iters", type=int, default=1, help="Number of iterations to train."
+    "--stop-iters", type=int, default=20, help="Number of iterations to train."
 )
-# Un timestep = une action de l’agent dans l’environnement.
 parser.add_argument(
     "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
@@ -35,7 +32,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # ray.init(num_cpus=args.num_cpus or None)
-    #  on mentionne quel env personalisse et ray va cree selon la methode "qsimpy_env_creator"
     register_env("QSimPyEnv", qsimpy_env_creator)
 
     replay_config = {

@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 
 class Log:
-    log = True
+    log = False
 
     @staticmethod
     def format_time(env_now):
