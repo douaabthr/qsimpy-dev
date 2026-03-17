@@ -170,6 +170,9 @@ def main():
 
             task_writer.writerow(task_header)
             details_writer.writerow(details_header)
+            
+            task_file.flush()
+            details_file.flush()
 
             for path in sorted(qasm_paths):
 
@@ -217,6 +220,7 @@ def main():
                         task_row += [-1, -1, "{}"]
 
                 task_writer.writerow(task_row)
+                task_file.flush()
 
                 # ---- DETAILS ROWS ----
                 for r in results[1:]:
@@ -230,6 +234,7 @@ def main():
                         str(r["readout_errors"])
                     ]
                     details_writer.writerow(details_row)
+                    task_file.flush()
 
     finally:
         if os.path.exists(EXTRACT_FOLDER):
