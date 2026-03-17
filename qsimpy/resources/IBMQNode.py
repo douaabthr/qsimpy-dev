@@ -102,5 +102,9 @@ def create_ibmq_node(env, id: int, backend_name: str):
     ibmq_node.qiskit_backend = node_instance
     ibmq_node.qnode_name = "ibm_" + backend_name
     ibmq_node.qnode_model = "ibmq" + str(ibmq_node.qubit_number)
+
+    ibmq_node.qnode_name = backend_name
+
+   
     ibmq_node.error = ibmq_errors[backend_name]    ## LAZEM NBDLOU HADI 
     return ibmq_node

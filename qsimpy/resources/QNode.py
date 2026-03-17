@@ -111,7 +111,11 @@ class QNode(simpy.Resource):
         )
         self.completed_tasks.append(task)
     def simulate_task(self, task):
-        transpiled_cl = task.qtask_data[self.qnode_model]["depth"]  # TODO: + 100k just for testing, remove for production
+
+
+        transpiled_cl = task.qtask_data[self.qnode_name]["depth"]  # TODO: + 100k just for testing, remove for production
+
+        # transpiled_cl = task.qtask_data[self.qnode_model]["depth"]  # TODO: + 100k just for testing, remove for production
         Log.print_success(
             f"🔸 QTask {task.id}: Transpiling circuit from {task.circuit_layers} layer to {transpiled_cl} layers to adapt with {self.qnode_name} backend ({self.qubit_number} qubits, CLOPS {self.clops})",
         )
