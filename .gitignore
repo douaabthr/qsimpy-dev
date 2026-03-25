@@ -1,3 +1,11 @@
+#data (tasks + backend details)
+qdataset/custom/qd-generation/all_tasks.csv
+qdataset/custom/qd-generation/tasks_backend_details.csv
+
+# Ignore zip file
+qdataset/custom/MQTBench_2-130q.zip
+
+
 # Python
 *.pyc
 *.pyo

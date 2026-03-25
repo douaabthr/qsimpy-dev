@@ -61,7 +61,7 @@ class QSimPyEnv(gym.Env):
         # QTask attrributes = [arrivaltime, qt_qubits, cl]
         # QNode attributes = [qn_qubits, d1cps, next_available_time]
         # n_qtasks : cad le borker doit gerer cad placee 25 tach en meme temp 
-        self.n_qtasks = 25
+        self.n_qtasks = 26
         self.n_qnodes = 5  # number of qnodes
         self.qtasks = []
         self.qnodes = []
@@ -172,11 +172,12 @@ class QSimPyEnv(gym.Env):
         # Create a list of 10 IBM QNodes
         qnode_ids = range(self.n_qnodes)
         qnode_names = [
-            "washington",
-            "kolkata",
-            "hanoi",
-            "perth",
-            "lagos",
+            "torino",   #133
+            "brisbane", #127
+            "washington",    #127
+            "hanoi",        #27
+            "perth",       #7
+                 
         ]
         self.qnodes = [
             IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
