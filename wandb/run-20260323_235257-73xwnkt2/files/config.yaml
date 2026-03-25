@@ -1,0 +1,55 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            pqeykb2grherh78wku9cb2b8bm5yuod0:
+                codePath: custom_heuristics.py
+                codePathLocal: custom_heuristics.py
+                cpu_count: 12
+                cpu_count_logical: 16
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "251657187328"
+                        used: "27356217344"
+                email: imane.rahim.dz@gmail.com
+                executable: C:\Users\Imane\anaconda3\envs\qsim-dev\python.exe
+                git:
+                    commit: 62c69030006e18631d19909e490760f552964cdd
+                    remote: https://github.com/douaabthr/qsimpy-dev.git
+                gpu: NVIDIA GeForce MX550
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Turing
+                      cudaCores: 1024
+                      memoryTotal: "2147483648"
+                      name: NVIDIA GeForce MX550
+                      uuid: GPU-ba933265-ca90-84e7-36d1-2cab76132c76
+                host: LENOVO-T14
+                memory:
+                    total: "34010619904"
+                os: Windows-10-10.0.26200-SP0
+                program: d:\qsimpy-dev\custom_heuristics.py
+                python: CPython 3.10.20
+                root: D:\qsimpy-dev
+                startedAt: "2026-03-23T22:52:57.310619Z"
+                writerId: pqeykb2grherh78wku9cb2b8bm5yuod0
+        m: []
+        python_version: 3.10.20
+        t:
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.10.20
+            "5": 0.25.1
+            "8":
+                - 3
+            "12": 0.25.1
+            "13": windows-amd64
+algorithm:
+    value: round_robin
+dataset:
+    value: qdataset_1000_sub_26.csv
+episodes:
+    value: 5

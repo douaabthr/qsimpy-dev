@@ -8,7 +8,7 @@ from qiskit import QuantumCircuit, transpile
 from qiskit.converters import circuit_to_dag
 from qiskit.dagcircuit import DAGOpNode
 from qiskit_ibm_runtime.fake_provider import FakeProviderForBackendV2
-
+from qiskit.transpiler.exceptions import TranspilerError
 # ---------------------------------------------------------
 # 1. PATH & CONFIG
 # ---------------------------------------------------------
@@ -36,7 +36,7 @@ provider = FakeProviderForBackendV2()
 
 def get_backend_instance(name):
     try:
-        return provider.get_backend(f"fake_{name}")
+        return provider.backend(f"fake_{name}")
     except:
         return None
 
@@ -71,7 +71,11 @@ def extract_detailed_features(qasm_path, calibration_data):
         if not backend_inst or backend_inst.num_qubits < init_circuit.num_qubits:
             continue
 
-        transpiled = transpile(init_circuit, backend_inst, optimization_level=3)
+        try:
+            transpiled = transpile(init_circuit, backend_inst, optimization_level=3)
+        except TranspilerError:
+            print(f"⚠️ Skipping {backend_name} (connectivity issue)")
+            continue
         dag = circuit_to_dag(transpiled)
 
         # A. Gate details (for details file)

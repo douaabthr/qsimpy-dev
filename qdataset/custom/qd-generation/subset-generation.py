@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import os
+
 
 # Load the original dataset
-df = pd.read_csv("./qdataset/custom/qd-generation/qdataset.csv")
+df = pd.read_csv("./qdataset/custom/qd-generation/all_tasks.csv")
 
 
 # Function to create a synthetic sub-dataset
@@ -15,12 +17,13 @@ def create_sub_dataset(df, target_depth, tolerance, num_circuits):
     ):
         subset = df.sample(n=num_circuits)
         current_depth = subset["original_depth"].sum()
+    
     return subset, current_depth
 
 
 # Adjustable parameters
-num_subsets = 100  # Number of subsets to create
-num_circuits = 60  # Number of circuits in each subset
+num_subsets = 1000  # Number of subsets to create
+num_circuits = 26  # Number of circuits in each subset
 average_depth = (
     df["original_depth"].sum() // len(df) * num_circuits
 )  # Average total depth for 'num_circuits' circuits
@@ -47,8 +50,13 @@ final_df = pd.concat(all_subsets)
 cols = ["subset"] + [col for col in final_df if col != "subset"]
 final_df = final_df[cols]
 
-# Save the modified DataFrame to a new CSV file
+
+output_path = "./qdataset/custom/datasets"
+
+
+file_name = f"qdataset_{num_subsets}_sub_{num_circuits}.csv"
+
 final_df.to_csv(
-    "synds_" + str(num_subsets) + "_sub_" + str(num_circuits) + ".csv",
+    os.path.join(output_path, file_name),
     index=False,
 )
