@@ -4,6 +4,8 @@ import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+from tqdm import tqdm
+
 
 class HeuristicSolutions:
     def __init__(self, env, num_episodes=100):
@@ -30,7 +32,10 @@ class HeuristicSolutions:
         # Reset the subset of QTasks 
         self.env.round = 1
 
-        for _ in range(self.num_episodes):
+        print("Training ",control," ...")
+
+        for _ in tqdm(range(self.num_episodes), desc="Training Episodes"):
+        
 
             # Initialize the temporary array to store the results of the QTasks execution for each episode
             arr_temp = {
@@ -163,7 +168,7 @@ if __name__ == "__main__":
     env = qsimpy_env_creator(env_config)
 
     # Run the heuristic solutions
-    heuristics = HeuristicSolutions(env, num_episodes=100)
+    heuristics = HeuristicSolutions(env, num_episodes=5)
     heuristics.run("greedy")
     heuristics.run("random")
     heuristics.run("round_robin")

@@ -7,6 +7,7 @@ from qsimpy.tasks.TaskStatus import TaskStatus
 from typing import Optional
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from qiskit import QuantumCircuit
+import numpy as np
 
 class QNode(simpy.Resource):
     """A quantum node that can execute quantum tasks. This class inherits from simpy.Resource.
@@ -111,7 +112,11 @@ class QNode(simpy.Resource):
         )
         self.completed_tasks.append(task)
     def simulate_task(self, task):
-        transpiled_cl = task.qtask_data[self.qnode_model]["depth"]  # TODO: + 100k just for testing, remove for production
+
+
+        transpiled_cl = task.qtask_data[self.qnode_name]["depth"]  # TODO: + 100k just for testing, remove for production
+
+        # transpiled_cl = task.qtask_data[self.qnode_model]["depth"]  # TODO: + 100k just for testing, remove for production
         Log.print_success(
             f"🔸 QTask {task.id}: Transpiling circuit from {task.circuit_layers} layer to {transpiled_cl} layers to adapt with {self.qnode_name} backend ({self.qubit_number} qubits, CLOPS {self.clops})",
         )
@@ -220,3 +225,19 @@ class QNode(simpy.Resource):
             "d1cps": self.d1cps,
             "next_available_time": self.next_available_time,
         }
+
+
+    def compute_fidelity(self, qtask):
+        if not hasattr(self, "env") or not hasattr(self.env, "qtask_dataset"):
+            return 0.0
+
+        errors = self.env.qtask_dataset.get_errors(qtask.id_task, self.qnode_name)
+        gate_errors = errors.get("gate_errors", {})
+        readout_errors = errors.get("readout_errors", {})
+
+        fidelity = 1.0
+        for error in gate_errors.values():
+            fidelity *= (1 - error)
+        for error in readout_errors.values():
+            fidelity *= (1 - error)
+        return fidelity

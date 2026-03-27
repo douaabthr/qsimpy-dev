@@ -23,6 +23,7 @@ class Broker:
  
     def preprocess_qtask(self, qtask, qnode):
         # Check the constraints of the QTask
+        # print("DEBUG qtask:", qtask)
         qtask.qnode = qnode
         estimated_waiting_time = -1
         estimated_execution_time = -1

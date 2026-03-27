@@ -11,11 +11,12 @@ import numpy as np
 from numpy.random import default_rng
 from qsimpy import Broker, QTask, TaskStatus, IBMQNode, Dataset, Log
 import simpy
+import ast
 
 
 class QSimPyEnv(gym.Env):
 
-    MAX_ROUNDS = 999  # maximum number of rounds in the QTask dataset
+    MAX_ROUNDS = 9  # maximum number of rounds in the QTask dataset
 
     """
     Gym environment for QSimPy.
@@ -44,7 +45,8 @@ class QSimPyEnv(gym.Env):
         self,
         config=None,
         dataset=None,
-        mode="simulate"
+        mode="simulate",
+        dataset_errors=None
     ):
         """
         Initialize the QSimPyEnv class.
@@ -61,7 +63,7 @@ class QSimPyEnv(gym.Env):
         # QTask attrributes = [arrivaltime, qt_qubits, cl]
         # QNode attributes = [qn_qubits, d1cps, next_available_time]
         # n_qtasks : cad le borker doit gerer cad placee 25 tach en meme temp 
-        self.n_qtasks = 25
+        self.n_qtasks = 15
         self.n_qnodes = 5  # number of qnodes
         self.qtasks = []
         self.qnodes = []
@@ -107,7 +109,7 @@ class QSimPyEnv(gym.Env):
         # Load QTasks dataset
         if dataset is None:
             raise ValueError("Dataset is not specified")
-        self.qtask_dataset = Dataset(dataset)
+        self.qtask_dataset = Dataset(dataset,dataset_errors)
         self.rng = default_rng(seed=22)
         # QSimPy environment
         self.qsp_env = simpy.Environment()
@@ -172,11 +174,12 @@ class QSimPyEnv(gym.Env):
         # Create a list of 10 IBM QNodes
         qnode_ids = range(self.n_qnodes)
         qnode_names = [
-            "washington",
-            "kolkata",
-            "hanoi",
-            "perth",
-            "lagos",
+            "torino",   #133
+            "brisbane", #127
+            "washington",    #127
+            "hanoi",        #27
+            "perth",       #7
+
         ]
         self.qnodes = [
             IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
@@ -197,7 +200,6 @@ class QSimPyEnv(gym.Env):
 
         # Get QTask from the subset of the dataset
         qtasks = self.qtask_dataset.get_subset_data(self.round)
-        
         # Option 1: Random arrival time of qtasks (original implementation)
         n_qtasks = len(qtasks)  # number of qtasks
         qtask_arrival = self.rng.uniform(
@@ -218,6 +220,7 @@ class QSimPyEnv(gym.Env):
                 id=tid,
                 arrival_time=arrival_time,
                 qtask_data=qdata,
+                id_task=qdata["id_task"],
             )
             for tid, arrival_time, qdata in zip(qtask_ids, qtask_arrival, qtask_values)
         ]
@@ -267,12 +270,18 @@ class QSimPyEnv(gym.Env):
         
         # print(f"Estimated waiting time: {waiting_time}")
         # print(f"Estimated execution time: {execution_time}")
+        if qtask.gate_counts is None:
+            fidelity = 0.0
+        else:
+            fidelity = self.qnodes[qnode_id].compute_fidelity(qtask)
+        qtask.fidelity = fidelity
         self.results.append({
             'qtask_id': qtask.id,
             'qnode_id': qnode_id,
             'waiting_time': waiting_time,
             'execution_time': execution_time,
             'rescheduling_count': qtask.rescheduling_count,  # Store the actual count from the task
+            'fidelity': fidelity, 
         })
         reward = delay_time + waiting_time + execution_time
         return reward, qtask.rescheduling_count

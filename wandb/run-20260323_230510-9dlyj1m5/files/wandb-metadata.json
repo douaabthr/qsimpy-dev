@@ -1,0 +1,39 @@
+{
+  "os": "Windows-10-10.0.26200-SP0",
+  "python": "CPython 3.10.20",
+  "startedAt": "2026-03-23T22:05:10.954227Z",
+  "program": "d:\\qsimpy-dev\\custom_heuristics.py",
+  "codePath": "custom_heuristics.py",
+  "codePathLocal": "custom_heuristics.py",
+  "git": {
+    "remote": "https://github.com/douaabthr/qsimpy-dev.git",
+    "commit": "62c69030006e18631d19909e490760f552964cdd"
+  },
+  "root": "D:\\qsimpy-dev",
+  "host": "LENOVO-T14",
+  "executable": "C:\\Users\\Imane\\anaconda3\\envs\\qsim-dev\\python.exe",
+  "cpu_count": 12,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce MX550",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "251657187328",
+      "used": "27355860992"
+    }
+  },
+  "memory": {
+    "total": "34010619904"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce MX550",
+      "memoryTotal": "2147483648",
+      "cudaCores": 1024,
+      "architecture": "Turing",
+      "uuid": "GPU-ba933265-ca90-84e7-36d1-2cab76132c76"
+    }
+  ],
+  "cudaVersion": "12.8",
+  "writerId": "kn7m8jcka2h5ybk2xphqliy0valstoi6"
+}

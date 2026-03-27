@@ -11,15 +11,19 @@ class QTask:
         - status (TaskStatus): The status of the quantum task.
     """
     def __init__(
-        self,
-        id: None,
-        arrival_time: float,
-        qubit_number: int = None,
-        circuit_layers: int = None,
-        qasm_file: str = None,
-        qtask_data: dict = None,
-        shots: int = 1024,
-    ):
+    self,
+    id: int,
+    id_task: int,
+    arrival_time: float,
+    qubit_number: int = None,
+    circuit_layers: int = None,
+    qasm_file: str = None,
+    qtask_data: dict = None,
+    shots: int = 1024,
+    fidelity: float = None,
+    gate_errors: dict = None,
+    readout_errors: dict = None
+):
         """
         Initialize a quantum task.
         Args:
@@ -31,7 +35,7 @@ class QTask:
             self.id = id(self)
         else:
             self.id = id
-
+        self.id_task=id_task
         # If qasm_file is provided, extract features from it
         if qasm_file is not None:
             self.circuit = qiskit.qasm3.load(qasm_file)
@@ -70,7 +74,9 @@ class QTask:
         self.error = None
         self.shots = shots
         self.rescheduling_count = 0
-
+        self.fidelity = 1
+        self.gate_errors = gate_errors
+        self.readout_errors = readout_errors
     def set_status(self, status):
         self.status = status
  
