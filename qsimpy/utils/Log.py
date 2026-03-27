@@ -64,10 +64,10 @@ class Log:
             print(f"✨ {len(all_completed_tasks)} SUCCESSFUL TASKS ✨")
             print("=================================")
             print(
-                " QTask ID | QNode | Arrival Time | Waiting Time | Start Time   | Execution Time  | Wall Time   | Finish Time "
+                " QTask ID | QNode | Arrival | Waiting | Start | Exec Time | Wall Time | Finish | Fidelity "
             )
             print(
-                "----------|-------|--------------|--------------|--------------|-----------------|-------------|-------------"
+                "----------|-------|--------------|--------------|--------------|-----------------|-------------|-------------|-----------"
             )
 
             # Print the sorted tasks
@@ -75,8 +75,13 @@ class Log:
                 wall_time = qtask.waiting_time + qtask.execution_time
                 qtask.start_running_time=qtask.arrival_time+qtask.waiting_time
                 qtask.finish_time=qtask.start_running_time+qtask.execution_time
+                fidelity = qtask.fidelity if qtask.fidelity is not None else 0
+
                 print(
-                    f" {qtask.id:^8} | {qtask.qnode.id:^5} | {round(qtask.arrival_time, 4):^12.4f} | {round(qtask.waiting_time, 4):^12.4f} | {round(qtask.start_running_time, 4):^12.4f} |  {round(qtask.execution_time, 4):^14.4f} | {round(wall_time, 4):^11.4f} | {round(qtask.finish_time, 4):^11.4f} "
+                    f" {qtask.id:^8} | {qtask.qnode.id:^5} | {round(qtask.arrival_time, 4):^8.4f} | "
+                    f"{round(qtask.waiting_time, 4):^8.4f} | {round(qtask.start_running_time, 4):^8.4f} | "
+                    f"{round(qtask.execution_time, 4):^10.4f} | {round(wall_time, 4):^9.4f} | "
+                    f"{round(qtask.finish_time, 4):^9.4f} | {fidelity:^10.6f}"
                 )
                 # Accumulate the waiting and execution times
                 total_waiting_time += qtask.waiting_time

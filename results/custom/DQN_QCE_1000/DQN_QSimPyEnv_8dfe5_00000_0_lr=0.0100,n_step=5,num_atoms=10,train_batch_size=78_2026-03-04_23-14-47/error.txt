@@ -1,0 +1,68 @@
+Failure # 1 (occurred at 2026-03-04_23-16-27)
+[36mray::DQN.train()[39m (pid=32156, ip=127.0.0.1, actor_id=92865e7e38dc8ca2ac60696301000000, repr=DQN)
+  File "python\ray\_raylet.pyx", line 1424, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1364, in ray._raylet.execute_task.function_executor
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\_private\function_manager.py", line 726, in actor_method_executor
+    return method(__ray_actor, *args, **kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\tune\trainable\trainable.py", line 375, in train
+    raise skipped from exception_cause(skipped)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\tune\trainable\trainable.py", line 372, in train
+    result = self.step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 853, in step
+    results, train_iter_ctx = self._run_one_training_iteration()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 2837, in _run_one_training_iteration
+    results = self.training_step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\dqn\dqn.py", line 404, in training_step
+    new_sample_batch = synchronous_parallel_sample(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\execution\rollout_ops.py", line 82, in synchronous_parallel_sample
+    sample_batches = [worker_set.local_worker().sample()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\rollout_worker.py", line 696, in sample
+    batches = [self.input_reader.next()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\sampler.py", line 92, in next
+    batches = [self.get_data()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\sampler.py", line 277, in get_data
+    item = next(self._env_runner)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 344, in run
+    outputs = self.step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 370, in step
+    active_envs, to_eval, outputs = self._process_observations(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 688, in _process_observations
+    self._handle_done_episode(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 855, in _handle_done_episode
+    resetted_obs, resetted_infos = self._base_env.try_reset(env_id)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 479, in try_reset
+    obs, infos = self.vector_env.reset_at(env_id, seed=seed, options=options)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 314, in reset_at
+    raise e
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 306, in reset_at
+    obs_and_infos = self.envs[index].reset(seed=seed, options=options)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 334, in reset
+    self.generate_qtasks()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\gymenv_qsimpy.py", line 246, in generate_qtasks
+    qtasks = self.qtask_dataset.get_subset_data(self.round)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 116, in get_subset_data
+    self.load_data_pd(self.filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy\utils\Dataset.py", line 15, in load_data_pd
+    self.df = pd.read_csv(filename)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 626, in _read
+    return parser.read(nrows)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\readers.py", line 1923, in read
+    ) = self._engine.read(  # type: ignore[attr-defined]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\pandas\io\parsers\c_parser_wrapper.py", line 234, in read
+    chunks = self._reader.read_low_memory(nrows)
+  File "pandas/_libs/parsers.pyx", line 838, in pandas._libs.parsers.TextReader.read_low_memory
+  File "pandas/_libs/parsers.pyx", line 905, in pandas._libs.parsers.TextReader._read_rows
+  File "pandas/_libs/parsers.pyx", line 874, in pandas._libs.parsers.TextReader._tokenize_rows
+  File "pandas/_libs/parsers.pyx", line 891, in pandas._libs.parsers.TextReader._check_tokenize_status
+  File "pandas/_libs/parsers.pyx", line 2061, in pandas._libs.parsers.raise_parser_error
+pandas.errors.ParserError: Error tokenizing data. C error: out of memory

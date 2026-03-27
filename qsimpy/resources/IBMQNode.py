@@ -57,7 +57,7 @@ ibmq_systems = {
     "quito": {"qubits": 5, "qv": 16, "clops": 1500},
 }
 
-CALIBRATION_PATH = "./qsimpy/resources/backend_calibration_data.json"
+CALIBRATION_PATH = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qsimpy\resources\backend_calibration_data.json"
 
 def create_ibmq_node(env, id: int, backend_name: str):
     """

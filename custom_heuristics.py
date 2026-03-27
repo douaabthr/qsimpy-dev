@@ -4,14 +4,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from env_creator import qsimpy_env_creator
-import wandb
+# import wandb
 import shutil
 
 
-wandb.login()
+# wandb.login()
 
 class HeuristicSolutions:
-    def __init__(self, env, num_episodes=100, project_name="qsimpy-heuristics"):
+    def __init__(self, env, num_episodes=5, project_name="qsimpy-heuristics"):
         self.env = env
         self.num_episodes = num_episodes
         self.project_name = project_name
@@ -33,31 +33,31 @@ class HeuristicSolutions:
         print(f"Running heuristic: {control}")
 
         # -------------------- Init W&B --------------------
-        wandb.init(
-            project=self.project_name,
-            name=control,
-            config={
-                "algorithm": control,
-                "episodes": self.num_episodes,
-                "dataset": os.path.basename(env.qtask_dataset.filename)
-            }
-        )
+        # wandb.init(
+        #     project=self.project_name,
+        #     name=control,
+        #     config={
+        #         "algorithm": control,
+        #         "episodes": self.num_episodes,
+        #         "dataset": os.path.basename(env.qtask_dataset.filename)
+        #     }
+        # )
 
-         # -------------------- Dataset Artifact --------------------
-        dataset_path = env.qtask_dataset.filename
+        #  # -------------------- Dataset Artifact --------------------
+        # dataset_path = env.qtask_dataset.filename
 
-        artifact = wandb.Artifact(
-            name="qsimpy_dataset",
-            type="dataset",
-            description="Task dataset"
-        )
-        artifact.add_file(dataset_path)
+        # artifact = wandb.Artifact(
+        #     name="qsimpy_dataset",
+        #     type="dataset",
+        #     description="Task dataset"
+        # )
+        # artifact.add_file(dataset_path)
 
-        # Log + get versioned artifact
-        logged_artifact = wandb.log_artifact(artifact)
+        # # Log + get versioned artifact
+        # logged_artifact = wandb.log_artifact(artifact)
 
-        # 🔥 CRUCIAL: link artifact to run
-        wandb.run.use_artifact(logged_artifact)
+        # # 🔥 CRUCIAL: link artifact to run
+        # wandb.run.use_artifact(logged_artifact)
 
         # -------------------- Run episodes --------------------
         for episode in tqdm(range(self.num_episodes), desc="Episodes"):
@@ -98,16 +98,16 @@ class HeuristicSolutions:
             self.env.qsp_env.run()
             self.results.append(arr_temp)
 
-            # -------------------- Log episode metrics to W&B --------------------
-            wandb.log({
-                "episode": episode,
-                "total_completion_time": arr_temp["total_completion_time"],
-                "rescheduling_count": arr_temp["rescheduling_count"],
-                "algorithm": control
-            })
+        #     # -------------------- Log episode metrics to W&B --------------------
+        #     wandb.log({
+        #         "episode": episode,
+        #         "total_completion_time": arr_temp["total_completion_time"],
+        #         "rescheduling_count": arr_temp["rescheduling_count"],
+        #         "algorithm": control
+        #     })
 
-        wandb.finish()
-        print(f"Finished W&B run for {control}")
+        # wandb.finish()
+        # print(f"Finished W&B run for {control}")
 
     # -------------------- Heuristic strategies --------------------
     def greedy(self, greedy_index):
@@ -147,7 +147,9 @@ if __name__ == "__main__":
     env_config = {
         "obs_filter": "rescale_-1_1",
         "reward_filter": None,
-        "dataset": "./qdataset/custom/datasets/qdataset_1000_sub_26.csv",
+        "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+        "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
+    
     }
 
     env = qsimpy_env_creator(env_config)
