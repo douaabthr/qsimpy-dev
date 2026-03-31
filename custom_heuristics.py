@@ -147,9 +147,11 @@ if __name__ == "__main__":
     env_config = {
         "obs_filter": "rescale_-1_1",
         "reward_filter": None,
-        "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
-        "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
-    
+        # "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+        # "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
+        "dataset": r"D:\qsimpy-dev\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+        "dataset_errors": r"D:\qsimpy-dev\qdataset\custom\qd-generation\tasks_backend_details.csv",
+
     }
 
     env = qsimpy_env_creator(env_config)

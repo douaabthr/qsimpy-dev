@@ -3,7 +3,7 @@ from .QNode import QNode
 from qiskit_ibm_runtime.fake_provider import FakeProviderForBackendV2
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 import json 
-
+import os
 provider = FakeProviderForBackendV2()
 
 
@@ -57,8 +57,12 @@ ibmq_systems = {
     "quito": {"qubits": 5, "qv": 16, "clops": 1500},
 }
 
-CALIBRATION_PATH = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qsimpy\resources\backend_calibration_data.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+CALIBRATION_PATH = os.path.join(
+    BASE_DIR,
+    "backend_calibration_data.json"
+)
 def create_ibmq_node(env, id: int, backend_name: str):
     """
     Create an IBMQ node.

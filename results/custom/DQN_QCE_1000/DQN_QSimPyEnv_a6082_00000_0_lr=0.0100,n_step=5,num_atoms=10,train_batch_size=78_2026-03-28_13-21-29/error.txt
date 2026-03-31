@@ -1,0 +1,95 @@
+Failure # 1 (occurred at 2026-03-28_13-21-42)
+The actor died unexpectedly before finishing this task.
+	class_name: DQN
+	actor_id: 0c9e07cfaf95ebc269704d4601000000
+	pid: 31924
+	namespace: 5cd23b3d-b9d1-430e-ac17-9b86a42e0abc
+	ip: 127.0.0.1
+The actor is dead because its worker process has died. Worker exit type: SYSTEM_ERROR Worker exit detail: Worker exits unexpectedly. Worker exits with an exit code None. Traceback (most recent call last):
+  File "python\ray\_raylet.pyx", line 1760, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1794, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 968, in ray._raylet.raise_if_dependency_failed
+ray.exceptions.RaySystemError: System error: [WinError 1114] A dynamic link library (DLL) initialization routine failed. Error loading "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\lib\c10.dll" or one of its dependencies.
+traceback: Traceback (most recent call last):
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\serialization.py", line 404, in deserialize_objects
+    obj = self._deserialize_object(data, metadata, object_ref)
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\serialization.py", line 270, in _deserialize_object
+    return self._deserialize_msgpack_data(data, metadata_fields)
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\serialization.py", line 225, in _deserialize_msgpack_data
+    python_objects = self._deserialize_pickle5_data(pickle5_data)
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\serialization.py", line 215, in _deserialize_pickle5_data
+    obj = pickle.loads(in_band)
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\__init__.py", line 7, in <module>
+    from ray.rllib.env.base_env import BaseEnv
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\env\__init__.py", line 6, in <module>
+    from ray.rllib.env.policy_client import PolicyClient
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\env\policy_client.py", line 17, in <module>
+    from ray.rllib.policy.sample_batch import MultiAgentBatch
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\policy\__init__.py", line 1, in <module>
+    from ray.rllib.policy.policy import Policy
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\policy\policy.py", line 30, in <module>
+    from ray.rllib.core.models.base import STATE_IN, STATE_OUT
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\core\models\base.py", line 5, in <module>
+    from ray.rllib.core.models.configs import ModelConfig
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\core\models\configs.py", line 8, in <module>
+    from ray.rllib.models.torch.misc import (
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\models\__init__.py", line 1, in <module>
+    from ray.rllib.models.action_dist import ActionDistribution
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\models\action_dist.py", line 4, in <module>
+    from ray.rllib.models.modelv2 import ModelV2
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\models\modelv2.py", line 8, in <module>
+    from ray.rllib.models.preprocessors import get_preprocessor, RepeatedValuesPreprocessor
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\models\preprocessors.py", line 8, in <module>
+    from ray.rllib.utils.spaces.repeated import Repeated
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\__init__.py", line 6, in <module>
+    from ray.rllib.utils.filter import Filter
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\filter.py", line 9, in <module>
+    from ray.rllib.utils.numpy import SMALL_NUMBER
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\numpy.py", line 19, in <module>
+    torch, _ = try_import_torch()
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\framework.py", line 217, in try_import_torch
+    import torch
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\__init__.py", line 280, in <module>
+    _load_dll_libraries()
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\__init__.py", line 263, in _load_dll_libraries
+    raise err
+OSError: [WinError 1114] A dynamic link library (DLL) initialization routine failed. Error loading "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\lib\c10.dll" or one of its dependencies.
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "python\ray\_raylet.pyx", line 2206, in ray._raylet.task_execution_handler
+  File "python\ray\_raylet.pyx", line 2102, in ray._raylet.execute_task_with_cancellation_handler
+  File "python\ray\_raylet.pyx", line 1756, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1757, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1995, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1055, in ray._raylet.store_task_errors
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\function_manager.py", line 638, in temporary_actor_method
+    raise RuntimeError(
+RuntimeError: The actor with name DQN failed to import on the worker. This may be because needed library dependencies are not installed in the worker environment:
+
+Traceback (most recent call last):
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\_private\function_manager.py", line 677, in _load_actor_class_from_gcs
+    actor_class = pickle.loads(pickled_class)
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\__init__.py", line 7, in <module>
+    from ray.rllib.env.base_env import BaseEnv
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\env\__init__.py", line 1, in <module>
+    from ray.rllib.env.base_env import BaseEnv
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\env\base_env.py", line 6, in <module>
+    from ray.rllib.utils.annotations import Deprecated, DeveloperAPI, PublicAPI
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\__init__.py", line 6, in <module>
+    from ray.rllib.utils.filter import Filter
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\filter.py", line 9, in <module>
+    from ray.rllib.utils.numpy import SMALL_NUMBER
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\numpy.py", line 19, in <module>
+    torch, _ = try_import_torch()
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\ray\rllib\utils\framework.py", line 217, in try_import_torch
+    import torch
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\__init__.py", line 280, in <module>
+    _load_dll_libraries()
+  File "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\__init__.py", line 263, in _load_dll_libraries
+    raise err
+OSError: [WinError 1114] A dynamic link library (DLL) initialization routine failed. Error loading "C:\Users\Imane\anaconda3\envs\qsim-dev\lib\site-packages\torch\lib\c10.dll" or one of its dependencies.
+
+An unexpected internal error occurred while the worker was executing a task.

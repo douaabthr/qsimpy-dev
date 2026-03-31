@@ -1,3 +1,16 @@
+
+import os
+import ctypes
+try:
+    # Change the path below if your anaconda is installed in a different place
+    dll_path = r"C:\Users\Imane\anaconda3\envs\qsim\lib\site-packages\torch\lib\c10.dll"
+    ctypes.CDLL(dll_path)
+    print("Successfully pre-loaded c10.dll")
+except Exception as e:
+    print(f"Pre-load failed: {e}")
+    
+
+
 import argparse
 import ray
 from ray import tune, air, train
@@ -8,6 +21,13 @@ from ray.rllib.utils.framework import try_import_tf
 from ray.tune.analysis import ExperimentAnalysis
 import os
 from ray.air import CheckpointConfig
+
+
+ray.init(
+    ignore_reinit_error=True,
+    local_mode=True  # forces all rollouts in main process
+)
+
 
 tf1, tf, tfv = try_import_tf()
 parser = argparse.ArgumentParser()
@@ -22,10 +42,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--stop-iters", type=int, default=20, help="Number of iterations to train."
+    "--stop-iters", type=int, default=1, help="Number of iterations to train."
 )
 parser.add_argument(
-    "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
+    "--stop-timesteps", type=int, default=10, help="Number of timesteps to train."
 )
 
 if __name__ == "__main__":
@@ -50,8 +70,10 @@ if __name__ == "__main__":
             env_config={
                 "obs_filter": "rescale_-1_1",
                 "reward_filter": None,
-                "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
-                "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
+                # "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
+                # "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
+                "dataset": r"D:\qsimpy-dev\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
+                "dataset_errors": r"D:\qsimpy-dev\qdataset\custom\qd-generation\tasks_backend_details.csv",
 
             },
             
@@ -72,6 +94,8 @@ if __name__ == "__main__":
             v_min=-10.0,
             v_max=10.0,
         )
+     
+    
     )
 
     stop_config = {
@@ -86,7 +110,9 @@ if __name__ == "__main__":
     result_directory = os.path.join(current_directory, "results")
 
     # Create the storage_path with the "file://" scheme
-    storage_path = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom"
+    # storage_path = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom"
+    storage_path=r"D:\qsimpy-dev\results\custom"
+
 #  debut de l'entrainement
     results = tune.Tuner(
         "DQN",
