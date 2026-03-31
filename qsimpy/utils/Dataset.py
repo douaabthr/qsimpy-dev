@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class Dataset:
-    def __init__(self, circuit_file: str, errors_file: str = None):
+    def __init__(self, circuit_file: str, errors_file: str):
         self.circuit_file = circuit_file
         self.errors_file = errors_file
         self.data = {}         
@@ -12,7 +12,6 @@ class Dataset:
 
         if self.errors_file:
                 self.load_errors_data()
-        
     # Load data from csv file using pandas
     def load_data_pd(self, filename):   
         self.df = pd.read_csv(filename)
@@ -150,7 +149,6 @@ class Dataset:
                 return
 
             df = pd.read_csv(self.errors_file)
-
             # Convertir colonnes dictionnaire depuis string
             for col in ["gates_errors", "readout_errors"]:
                 if col in df.columns:

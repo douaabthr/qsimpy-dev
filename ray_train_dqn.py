@@ -8,6 +8,7 @@ from ray.rllib.utils.framework import try_import_tf
 from ray.tune.analysis import ExperimentAnalysis
 import os
 from ray.air import CheckpointConfig
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
 
 tf1, tf, tfv = try_import_tf()
 parser = argparse.ArgumentParser()
@@ -27,7 +28,12 @@ parser.add_argument(
 parser.add_argument(
     "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
+class MyCallbacks(DefaultCallbacks):
+    def on_episode_step(self, *, episode, **kwargs):
+        info = episode._last_infos  
 
+        if info and "fidelity" in info:
+            episode.custom_metrics.setdefault("fidelity", []).append(info["fidelity"])
 if __name__ == "__main__":
     args = parser.parse_args()
 
@@ -72,12 +78,14 @@ if __name__ == "__main__":
             v_min=-10.0,
             v_max=10.0,
         )
+        .callbacks(MyCallbacks)
     )
 
     stop_config = {
         "timesteps_total": args.stop_timesteps,
         "training_iteration": args.stop_iters,
     }
+    
     
     # Get the absolute path of the current directory
     current_directory = os.getcwd()
