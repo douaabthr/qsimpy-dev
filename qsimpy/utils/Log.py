@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 class Log:
     log = False
-
     @staticmethod
     def format_time(env_now):
         hours = int(env_now // 3600)

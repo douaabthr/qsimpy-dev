@@ -12,11 +12,13 @@ from numpy.random import default_rng
 from qsimpy import Broker, QTask, TaskStatus, IBMQNode, Dataset, Log
 import simpy
 import ast
+import os
+import re
 
 
 class QSimPyEnv(gym.Env):
 
-    MAX_ROUNDS = 9  # maximum number of rounds in the QTask dataset
+    MAX_ROUNDS = 999  # maximum number of rounds in the QTask dataset
 
     """
     Gym environment for QSimPy.
@@ -63,8 +65,44 @@ class QSimPyEnv(gym.Env):
         # QTask attrributes = [arrivaltime, qt_qubits, cl]
         # QNode attributes = [qn_qubits, d1cps, next_available_time]
         # n_qtasks : cad le borker doit gerer cad placee 25 tach en meme temp 
-        self.n_qtasks = 15
-        self.n_qnodes = 5  # number of qnodes
+
+
+
+        #UPDATE N_QTASKS AND N_QNODES AUTOMATICALLY
+
+        # self.n_qtasks = 26
+        # Load QTasks dataset
+        if dataset is None:
+            raise ValueError("Dataset is not specified")
+        self.qtask_dataset = Dataset(dataset,dataset_errors)
+        # Extract filename
+        filename = os.path.basename(dataset)
+
+        # Extract number of qtasks using regex
+        match = re.search(r"qdataset_\d+_sub_(\d+)", filename)
+
+        if match:
+            self.n_qtasks = int(match.group(1))
+        else:
+            raise ValueError(f"Cannot extract n_qtasks from filename: {filename}")
+        
+
+
+        # self.n_qnodes = 5  # number of qnodes
+
+        self.qnode_names = [
+            "torino",   #133
+            "brisbane", #127
+            "washington",    #127
+            "hanoi",        #27
+            "perth",       #7
+
+        ]
+        self.n_qnodes = len(self.qnode_names)
+
+
+
+
         self.qtasks = []
         self.qnodes = []
         self.mode = mode
@@ -106,13 +144,14 @@ class QSimPyEnv(gym.Env):
 
         self.action_space = Discrete(self.n_qnodes)
 
-        # Load QTasks dataset
-        if dataset is None:
-            raise ValueError("Dataset is not specified")
-        self.qtask_dataset = Dataset(dataset,dataset_errors)
+        
+        
         self.rng = default_rng(seed=22)
         # QSimPy environment
         self.qsp_env = simpy.Environment()
+
+
+       
         self.setup_quantum_resources()
 
         self.round = 1
@@ -173,17 +212,11 @@ class QSimPyEnv(gym.Env):
     def setup_quantum_resources(self):
         # Create a list of 10 IBM QNodes
         qnode_ids = range(self.n_qnodes)
-        qnode_names = [
-            "torino",   #133
-            "brisbane", #127
-            "washington",    #127
-            "hanoi",        #27
-            "perth",       #7
-
-        ]
+       
+        
         self.qnodes = [
             IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
-            for qid, qname in zip(qnode_ids, qnode_names)
+            for qid, qname in zip(qnode_ids, self.qnode_names)
         ]
 
         # Create a Broker
