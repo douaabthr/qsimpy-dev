@@ -6,11 +6,13 @@ import numpy as np
 
 def qsimpy_env_creator(env_config):
     dataset = env_config.pop("dataset", None)
+    dataset_errors = env_config.pop("dataset_errors", None)
+
     config = env_config.pop("config", None)
     config = config if config is not None else {}
     if dataset is None:
         raise ValueError("Dataset is not specified")
-    env = QSimPyEnv(dataset=dataset, config=config)
+    env = QSimPyEnv(dataset=dataset, dataset_errors=dataset_errors,config=config)
     obs_filter = env_config.pop("obs_filter", None)
     reward_filter = env_config.pop("reward_filter", None)
 
