@@ -227,17 +227,41 @@ class QNode(simpy.Resource):
         }
 
 
-    def compute_fidelity(self, qtask):
-        if not hasattr(self, "env") or not hasattr(self.env, "qtask_dataset"):
+    def compute_fidelity(self, qtask, dataset):
+        """
+        Compute fidelity of a quantum task based on gate and readout errors.
+        """
+
+        # Sécurité
+        if dataset is None:
+            print("⚠️ Dataset is None")
             return 0.0
 
-        errors = self.env.qtask_dataset.get_errors(qtask.id_task, self.qnode_name)
+        # Conversion importante (clé du dataset = string)
+        task_id = str(qtask.id_task)
+        backend = self.qnode_name
+
+        # Debug (important pour vérifier)
+        # print(f"[DEBUG] Task ID: {task_id}, Backend: {backend}")
+
+        # Récupérer les erreurs
+        errors = dataset.get_errors(task_id, backend)
+
         gate_errors = errors.get("gate_errors", {})
         readout_errors = errors.get("readout_errors", {})
 
+        # print("[DEBUG] Gate errors:", gate_errors)
+        # print("[DEBUG] Readout errors:", readout_errors)
+
+        # Calcul fidélité
         fidelity = 1.0
+
         for error in gate_errors.values():
             fidelity *= (1 - error)
+
         for error in readout_errors.values():
             fidelity *= (1 - error)
+
+        # print(f"[DEBUG] Fidelity computed: {fidelity}")
+
         return fidelity

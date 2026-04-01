@@ -3,6 +3,7 @@
 *.pyo
 __pycache__/
 
+.results
 # SimPy
 .env
 .env.bak

@@ -28,6 +28,7 @@ ray.init(
     local_mode=True  # forces all rollouts in main process
 )
 
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
 
 tf1, tf, tfv = try_import_tf()
 parser = argparse.ArgumentParser()
@@ -45,9 +46,16 @@ parser.add_argument(
     "--stop-iters", type=int, default=1, help="Number of iterations to train."
 )
 parser.add_argument(
+    "--stop-timesteps", type=int, default=22, help="Number of timesteps to train."
     "--stop-timesteps", type=int, default=10, help="Number of timesteps to train."
 )
 
+class MyCallbacks(DefaultCallbacks):
+    def on_episode_step(self, *, episode, **kwargs):
+        info = episode._last_infos  
+
+        if info and "fidelity" in info:
+            episode.custom_metrics.setdefault("fidelity", []).append(info["fidelity"])
 if __name__ == "__main__":
     args = parser.parse_args()
 
@@ -63,17 +71,17 @@ if __name__ == "__main__":
     }
 
     config = (
-        DQNConfig().rollouts(num_rollout_workers=0)
+        DQNConfig().rollouts(num_rollout_workers=0,
+           rollout_fragment_length=50
+)
         .framework(framework=args.framework)
         .environment(
             env="QSimPyEnv",
             env_config={
                 "obs_filter": "rescale_-1_1",
                 "reward_filter": None,
-                # "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
-                # "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
-                "dataset": r"D:\qsimpy-dev\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
-                "dataset_errors": r"D:\qsimpy-dev\qdataset\custom\qd-generation\tasks_backend_details.csv",
+                "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+                "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
 
             },
             
@@ -94,8 +102,8 @@ if __name__ == "__main__":
             v_min=-10.0,
             v_max=10.0,
         )
-     
-    
+        .reporting(min_sample_timesteps_per_iteration=100)
+        .callbacks(MyCallbacks)
     )
 
     stop_config = {

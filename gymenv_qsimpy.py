@@ -5,6 +5,8 @@ Sample Gymasium environment for QSimPy with the scenario of 5 IBM QNodes (washin
 and continuous QTasks arrival, generated from a quantum circuit dataset.
 """
 
+import os
+
 import gymnasium as gym
 from gymnasium.spaces import Box, Discrete
 import numpy as np
@@ -15,7 +17,7 @@ import ast
 import os
 import re
 
-
+import pandas as pd
 class QSimPyEnv(gym.Env):
 
     MAX_ROUNDS = 999  # maximum number of rounds in the QTask dataset
@@ -107,11 +109,7 @@ class QSimPyEnv(gym.Env):
         self.qnodes = []
         self.mode = mode
         self.obs_dim = 4 + self.n_qnodes * 3
-        self.observation_space = Box(
-            low=np.ones((self.obs_dim,), dtype=np.float32) * -np.inf,
-            high=np.ones((self.obs_dim,), dtype=np.float32) * np.inf,
-            dtype=np.float32,
-        )
+
         # Example max values for each type of observation
         max_time = 10000000  # Max next available time
         max_qubits = 500  # Max number of qubits
@@ -121,25 +119,24 @@ class QSimPyEnv(gym.Env):
 
         # Assuming the observation consists of [arrival_time, qubit_number, circuit_layers] for tasks
         # and [qubit_number, clops, next_available_time] for each node
-        task_obs_low = np.array([0, 0, 0, 0], dtype=np.float64)
+        task_obs_low = np.array([0, 0, 0, 0], dtype=np.float32)
         task_obs_high = np.array(
-            [max_time, max_qubits, max_layers, max_rescheduling_count], dtype=np.float64
+            [max_time, max_qubits, max_layers, max_rescheduling_count], dtype=np.float32
         )
-        node_obs_low = np.array([0, 0, -1] * self.n_qnodes, dtype=np.float64)
+        node_obs_low = np.array([0, 0, -1] * self.n_qnodes, dtype=np.float32)
         node_obs_high = np.array(
-            [max_qubits, max_clops, max_time] * self.n_qnodes, dtype=np.float64
+            [max_qubits, max_clops, max_time] * self.n_qnodes, dtype=np.float32
         )
 
         # Combine to form the complete observation space
-        obs_low = np.concatenate([task_obs_low, node_obs_low]).astype(np.float64)
-        obs_high = np.concatenate([task_obs_high, node_obs_high]).astype(np.float64)
+        obs_low = np.concatenate([task_obs_low, node_obs_low]).astype(np.float32)
+        obs_high = np.concatenate([task_obs_high, node_obs_high]).astype(np.float32)
 
         self.observation_space = Box(
-    low=-np.inf,
-    high=np.inf,
-    shape=(self.obs_dim,),
-    dtype=np.float32,
-)
+            low=obs_low.astype(np.float32),
+            high=obs_high.astype(np.float32),
+            dtype=np.float32
+        )
         self.current_obs = None
 
         self.action_space = Discrete(self.n_qnodes)
@@ -178,27 +175,21 @@ class QSimPyEnv(gym.Env):
         if self.current_qtask is None:
             self.qtask_obs = np.array([0, 0, 0, 0], dtype=np.float32)
         else:
-            self.qtask_obs = np.array(
-                [
-                    self.current_qtask.arrival_time,
-                    self.current_qtask.qubit_number,
-                    self.current_qtask.circuit_layers,
-                    self.current_qtask.rescheduling_count,
-                ],
-                dtype=np.float32,
-            )
+            self.qtask_obs = np.array([
+    float(self.current_qtask.arrival_time),
+    float(self.current_qtask.qubit_number),
+    float(self.current_qtask.circuit_layers),
+    float(self.current_qtask.rescheduling_count),
+], dtype=np.float32)
 
         # Get the current observation of quantum nodes
         self.qnode_obs = []
         for qnode in self.qnodes:
-            qnode_obs = np.array(
-                [
-                    qnode.qubit_number,
-                    qnode.clops,
-                    qnode.next_available_time, 
-                ],
-                dtype=np.float32,
-            )
+            qnode_obs = np.array([
+                float(qnode.qubit_number),
+                float(qnode.clops),
+                float(qnode.next_available_time),
+            ], dtype=np.float32)
             self.qnode_obs.append(qnode_obs)
 
         # Flatten the qnode observations and concatenate with qtask observations
@@ -234,6 +225,10 @@ class QSimPyEnv(gym.Env):
         # Get QTask from the subset of the dataset
         qtasks = self.qtask_dataset.get_subset_data(self.round)
         # Option 1: Random arrival time of qtasks (original implementation)
+        
+        # for qtask in qtasks.values():
+            # print("QTask :", qtask['id_task'],self.round)
+
         n_qtasks = len(qtasks)  # number of qtasks
         qtask_arrival = self.rng.uniform(
             low=0.1 + self.round * 60, high=59.9 + self.round * 60, size=n_qtasks
@@ -262,7 +257,7 @@ class QSimPyEnv(gym.Env):
         if len(self.qtasks) > 0:
             self.current_qtask = self.qtasks.pop(0)
         self.prev_qtask = None
-        self.round += 1
+        
 
 
 
@@ -291,7 +286,7 @@ class QSimPyEnv(gym.Env):
             ):
                 index += 1
             self.qtasks.insert(index, qtask)
-            return -0.1, qtask.rescheduling_count
+            return -0.1, qtask.rescheduling_count,0.0
         
         # Submit the qtask to the qnode following the action
         qtask_execution = self.broker.submit_qtask_to_qnode(
@@ -306,23 +301,31 @@ class QSimPyEnv(gym.Env):
         if qtask.gate_counts is None:
             fidelity = 0.0
         else:
-            fidelity = self.qnodes[qnode_id].compute_fidelity(qtask)
+            fidelity = self.qnodes[qnode_id].compute_fidelity(qtask, self.qtask_dataset)
         qtask.fidelity = fidelity
+        Log.print_success(f"🔸 QTask {qtask.id}: Fidelity = {fidelity:.4f}")
         self.results.append({
             'qtask_id': qtask.id,
             'qnode_id': qnode_id,
             'waiting_time': waiting_time,
             'execution_time': execution_time,
             'rescheduling_count': qtask.rescheduling_count,  # Store the actual count from the task
-            'fidelity': fidelity, 
+            'fidelity': fidelity,
+            'reward' :1 / (reward + 1e-6),
         })
         reward = delay_time + waiting_time + execution_time
-        return reward, qtask.rescheduling_count
+        return reward, qtask.rescheduling_count,fidelity
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=22)
+        
         self.generate_qtasks()
         self.current_obs = self._get_obs().astype(np.float32)
+        self.current_obs = np.clip(
+            self.current_obs,
+            self.observation_space.low,
+            self.observation_space.high
+        ).astype(np.float32)
         info = {}
         return self.current_obs, info
     
@@ -357,7 +360,7 @@ class QSimPyEnv(gym.Env):
         # action is qnode_id
         # Intermediately reward is the inverse of completion time
         # Sample Objective: Minimize the total completion time of all qtasks
-        time_reward, _ = self.submit_task_to_qnode(
+        time_reward, _ ,fidelity= self.submit_task_to_qnode(
             self.current_qtask, action
         )
         reward = 1 / (time_reward + 1e-6)
@@ -373,10 +376,21 @@ class QSimPyEnv(gym.Env):
         else:
             self.current_qtask = None
             terminated = True
+            self.round += 1
+            self.save_results()
 
-        self.current_obs = self._get_obs()
+        self.current_obs = self._get_obs().astype(np.float32)
+        self.current_obs = np.clip(
+                        self.current_obs,
+                        self.observation_space.low,
+                        self.observation_space.high
+                    ).astype(np.float32)
+        info = {
+        "fidelity": fidelity,
+        "scheduled_qtask": scheduled_qtask
+    }
 
-        return self.current_obs, reward, terminated, False, {"scheduled_qtask": scheduled_qtask}
+        return self.current_obs, reward, terminated, False,info
 
     def close(self):
         # If the evaluation is set, run the environment and export the results
@@ -387,3 +401,8 @@ class QSimPyEnv(gym.Env):
             self.collect_results()
             # Log.export_simulation_results(self.qnodes, output_file=self.policy)
         pass
+    def save_results(self):
+    
+        df = pd.DataFrame(self.results)
+        df.to_csv(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv", mode='a', header=not os.path.exists(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv"), index=False)
+        print("✅ Results saved to results.csv")
