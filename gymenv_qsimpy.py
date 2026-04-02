@@ -176,11 +176,11 @@ class QSimPyEnv(gym.Env):
             self.qtask_obs = np.array([0, 0, 0, 0], dtype=np.float32)
         else:
             self.qtask_obs = np.array([
-    float(self.current_qtask.arrival_time),
-    float(self.current_qtask.qubit_number),
-    float(self.current_qtask.circuit_layers),
-    float(self.current_qtask.rescheduling_count),
-], dtype=np.float32)
+            float(self.current_qtask.arrival_time),
+            float(self.current_qtask.qubit_number),
+            float(self.current_qtask.circuit_layers),
+            float(self.current_qtask.rescheduling_count),
+        ], dtype=np.float32)
 
         # Get the current observation of quantum nodes
         self.qnode_obs = []
@@ -268,8 +268,9 @@ class QSimPyEnv(gym.Env):
             self.round_robin_index += 1
 
         qtask, waiting_time, execution_time = self.broker.preprocess_qtask(
-            qtask, self.qnodes[qnode_id]
+            qtask, self.qnodes[qnode_id],self.qtask_dataset
         )
+        # print("preprocess_qtask done",execution_time)
         if qtask.status == TaskStatus.ERROR:
             # Apply large penalty to the reward if QTask constraints are not satisfied
             # Beside, this task need to be rescheduled to another QNode until it can be executed
@@ -290,7 +291,7 @@ class QSimPyEnv(gym.Env):
         
         # Submit the qtask to the qnode following the action
         qtask_execution = self.broker.submit_qtask_to_qnode(
-            qtask, self.qnodes[qnode_id]
+            qtask, self.qnodes[qnode_id],self.qtask_dataset
         )
         self.qsp_env.process(qtask_execution)
         # Delay time is the time from initial arrival time to the time the task started to be placed in the QNode
@@ -298,12 +299,17 @@ class QSimPyEnv(gym.Env):
         
         # print(f"Estimated waiting time: {waiting_time}")
         # print(f"Estimated execution time: {execution_time}")
+        
         if qtask.gate_counts is None:
             fidelity = 0.0
         else:
             fidelity = self.qnodes[qnode_id].compute_fidelity(qtask, self.qtask_dataset)
         qtask.fidelity = fidelity
+
         Log.print_success(f"🔸 QTask {qtask.id}: Fidelity = {fidelity:.4f}")
+
+        reward = delay_time + waiting_time + execution_time
+
         self.results.append({
             'qtask_id': qtask.id,
             'qnode_id': qnode_id,
@@ -313,7 +319,10 @@ class QSimPyEnv(gym.Env):
             'fidelity': fidelity,
             'reward' :1 / (reward + 1e-6),
         })
-        reward = delay_time + waiting_time + execution_time
+        # print("delay_time:", delay_time)
+        # print("waiting_time:", waiting_time)
+        # print("execution_time:", execution_time)
+
         return reward, qtask.rescheduling_count,fidelity
 
     def reset(self, *, seed=None, options=None):
