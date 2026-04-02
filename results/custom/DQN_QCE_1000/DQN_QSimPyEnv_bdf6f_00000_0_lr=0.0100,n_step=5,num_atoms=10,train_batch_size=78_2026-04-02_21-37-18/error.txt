@@ -1,0 +1,47 @@
+Failure # 1 (occurred at 2026-04-02_21-37-53)
+[36mray::DQN.train()[39m (pid=8276, ip=127.0.0.1, actor_id=ea97b3cac2bf55497fb7082e01000000, repr=DQN)
+  File "python\ray\_raylet.pyx", line 1424, in ray._raylet.execute_task
+  File "python\ray\_raylet.pyx", line 1364, in ray._raylet.execute_task.function_executor
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\_private\function_manager.py", line 726, in actor_method_executor
+    return method(__ray_actor, *args, **kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\tune\trainable\trainable.py", line 375, in train
+    raise skipped from exception_cause(skipped)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\tune\trainable\trainable.py", line 372, in train
+    result = self.step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 853, in step
+    results, train_iter_ctx = self._run_one_training_iteration()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\algorithm.py", line 2837, in _run_one_training_iteration
+    results = self.training_step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\util\tracing\tracing_helper.py", line 464, in _resume_span
+    return method(self, *_args, **_kwargs)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\algorithms\dqn\dqn.py", line 404, in training_step
+    new_sample_batch = synchronous_parallel_sample(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\execution\rollout_ops.py", line 82, in synchronous_parallel_sample
+    sample_batches = [worker_set.local_worker().sample()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\rollout_worker.py", line 696, in sample
+    batches = [self.input_reader.next()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\sampler.py", line 92, in next
+    batches = [self.get_data()]
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\sampler.py", line 277, in get_data
+    item = next(self._env_runner)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 344, in run
+    outputs = self.step()
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\evaluation\env_runner_v2.py", line 400, in step
+    self._base_env.send_actions(actions_to_send)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 464, in send_actions
+    ) = self.vector_env.vector_step(action_vector)
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 360, in vector_step
+    raise e
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy\qsimpy\qsimpy_env\lib\site-packages\ray\rllib\env\vector_env.py", line 353, in vector_step
+    results = self.envs[i].step(actions[i])
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\gymenv_qsimpy.py", line 333, in step
+    time_reward, _ ,fidelity= self.submit_task_to_qnode(
+  File "D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\gymenv_qsimpy.py", line 283, in submit_task_to_qnode
+    reward = delay_time + waiting_time + execution_time
+TypeError: unsupported operand type(s) for +: 'float' and 'NoneType'

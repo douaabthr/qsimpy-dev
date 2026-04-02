@@ -144,24 +144,30 @@ class Dataset:
             # Index by algorithm and original_width
             key = (row["subset"], row["algorithm"], int(row["original_width"]))
             self.data[key] = formatted_data
+
+
     def load_errors_data(self):
-            if not self.errors_file:
-                return
+        if not self.errors_file:
+            return
 
-            df = pd.read_csv(self.errors_file)
-            # Convertir colonnes dictionnaire depuis string
-            for col in ["gates_errors", "readout_errors"]:
-                if col in df.columns:
-                    df[col] = df[col].apply(lambda x: ast.literal_eval(x) if pd.notna(x) else {})
+        df = pd.read_csv(self.errors_file)
 
-            # Indexer par (task_id, backend)
-            self.errors_data = {
-                (str(row["task_id"]), row["backend"]): {
-                    "gate_errors": row.get("gates_errors", {}),
-                    "readout_errors": row.get("readout_errors", {})
-                }
-                for _, row in df.iterrows()
+        # Convertir toutes les colonnes dict
+        for col in ["gates_errors", "readout_errors", "critical_path"]:
+            if col in df.columns:
+                df[col] = df[col].apply(
+                    lambda x: ast.literal_eval(x) if pd.notna(x) else {}
+                )
+
+        # Indexer
+        self.errors_data = {
+            (str(row["task_id"]), row["backend"]): {
+                "gate_errors": row.get("gates_errors", {}),
+                "readout_errors": row.get("readout_errors", {}),
+                "critical_path": row.get("critical_path", {})
             }
+            for _, row in df.iterrows()
+        }
     def get_subset_data(self, subset_id):
 
         return {key: value for key, value in self.data.items() if key[0] == subset_id}
@@ -173,3 +179,10 @@ class Dataset:
     
     def get_errors(self, task_id, backend):
         return self.errors_data.get((str(task_id), backend), {"gate_errors": {}, "readout_errors": {}})
+
+    def get_gate_times(self, task_id, backend):
+        data = self.errors_data.get(
+            (str(task_id), backend),
+            {}
+        )
+        return data.get("critical_path", {})
