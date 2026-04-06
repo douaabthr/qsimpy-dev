@@ -204,8 +204,7 @@ class QNode(simpy.Resource):
         if mode=="simulate":
             data = dataset.get_gate_times(str(task.id_task), self.qnode_name)
             critical_path = data
-
-            total_time = max(critical_path.values())
+            total_time = sum(critical_path.values())
             # print(f"[DEBUG] Data for task {task.id_task} on backend {self.qnode_name}: {data}",total_time* task.shots)
 
             return total_time * task.shots

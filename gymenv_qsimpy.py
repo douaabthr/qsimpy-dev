@@ -93,13 +93,35 @@ class QSimPyEnv(gym.Env):
         # self.n_qnodes = 5  # number of qnodes
 
         self.qnode_names = [
+           
             "torino",   #133
             "brisbane", #127
             "washington",    #127
             "hanoi",        #27
             "perth",       #7
 
+
         ]
+
+
+        # self.qnode_names = [
+        #     "torino",        # ~133
+        #     "brisbane",      # ~127
+        #     "washington",    # ~127
+        #     "hanoi",         # ~27
+        #     "perth",         # ~7
+
+        #     "athens",        # ~5
+        #     "bogota",        # ~5
+        #     "algiers",         # ~27
+        #     "guadalupe",     # ~16
+        #     "lagos",         # ~7
+        #     "montreal",      # ~27
+        #     "ourense",       # ~5
+        #     "quito",         # ~5
+        #     "santiago",      # ~27
+        #     "boeblingen",         # ~20
+        # ]
         self.n_qnodes = len(self.qnode_names)
 
 
@@ -309,7 +331,7 @@ class QSimPyEnv(gym.Env):
         Log.print_success(f"🔸 QTask {qtask.id}: Fidelity = {fidelity:.4f}")
 
         reward = delay_time + waiting_time + execution_time
-
+      
         self.results.append({
             'qtask_id': qtask.id,
             'qnode_id': qnode_id,
@@ -317,7 +339,8 @@ class QSimPyEnv(gym.Env):
             'execution_time': execution_time,
             'rescheduling_count': qtask.rescheduling_count,  # Store the actual count from the task
             'fidelity': fidelity,
-            'reward' :1 / (reward + 1e-6),
+            'reward' :fidelity + 1 / (reward + 1e-6),
+            
         })
         # print("delay_time:", delay_time)
         # print("waiting_time:", waiting_time)
@@ -372,7 +395,8 @@ class QSimPyEnv(gym.Env):
         time_reward, _ ,fidelity= self.submit_task_to_qnode(
             self.current_qtask, action
         )
-        reward = 1 / (time_reward + 1e-6)
+        reward = fidelity + 1 / (time_reward + 1e-6)
+     
 
 
         scheduled_qtask = self.current_qtask
@@ -412,6 +436,16 @@ class QSimPyEnv(gym.Env):
         pass
     def save_results(self):
     
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        output_path = os.path.join(base_dir, "results", "custom", "custom_results.csv")
+
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
         df = pd.DataFrame(self.results)
-        df.to_csv(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv", mode='a', header=not os.path.exists(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv"), index=False)
-        print("✅ Results saved to results.csv")
+        df.to_csv(
+            output_path,
+            mode='a',
+            header=not os.path.exists(output_path),
+            index=False
+
+        )  # print("✅ Results saved to results.csv")

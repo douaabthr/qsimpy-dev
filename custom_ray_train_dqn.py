@@ -43,11 +43,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--stop-iters", type=int, default=1, help="Number of iterations to train."
+    "--stop-iters", type=int, default=20, help="Number of iterations to train."
 )
 parser.add_argument(
-    "--stop-timesteps", type=int, default=22, help="Number of timesteps to train."
-    "--stop-timesteps", type=int, default=10, help="Number of timesteps to train."
+    "--stop-timesteps", type=int, default=100000, help="Number of timesteps to train."
 )
 
 class MyCallbacks(DefaultCallbacks):
@@ -80,9 +79,11 @@ if __name__ == "__main__":
             env_config={
                 "obs_filter": "rescale_-1_1",
                 "reward_filter": None,
-                "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
-                "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
-
+                # "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+                # "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
+                 "dataset": r"C:\Users\Imane\OneDrive\Bureau\helper\qdataset_5000_sub_26.csv",
+               "dataset_errors": r"D:\qsimpy-dev\qdataset\custom\qd-generation\tasks_backend_details.csv",
+               
             },
             
         )
@@ -102,7 +103,7 @@ if __name__ == "__main__":
             v_min=-10.0,
             v_max=10.0,
         )
-        .reporting(min_sample_timesteps_per_iteration=100)
+        # .reporting(min_sample_timesteps_per_iteration=100)
         .callbacks(MyCallbacks)
     )
 
@@ -121,6 +122,7 @@ if __name__ == "__main__":
     # storage_path = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom"
     storage_path=r"D:\qsimpy-dev\results\custom"
 
+
 #  debut de l'entrainement
     results = tune.Tuner(
         "DQN",
@@ -129,7 +131,8 @@ if __name__ == "__main__":
             # Save checkpoints every 10 iterations.
             checkpoint_config=CheckpointConfig(checkpoint_frequency=10),
             storage_path=storage_path, 
-            name="DQN_QCE_1000"
+            name="fidelityOnlyNo130qb_baseFidelity_5000subset_26task_5backends_20it"
+        
         ),
         param_space=config.to_dict(),
     ).fit()

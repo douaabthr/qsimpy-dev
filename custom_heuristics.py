@@ -50,7 +50,7 @@ class HeuristicSolutions:
         #     name="qsimpy_dataset",
         #     type="dataset",
         #     description="Task dataset"
-        # )
+        # ) 
         # artifact.add_file(dataset_path)
 
         # # Log + get versioned artifact
@@ -83,7 +83,7 @@ class HeuristicSolutions:
                     raise ValueError(f"Unknown control: {control}")
 
                 obs, reward, terminated, done, info = self.env.step(action)
-
+                print(terminated)
                 # Round-robin / greedy index update
                 self.greedy_index = (self.greedy_index + 1) % self.env.n_qnodes
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         "reward_filter": None,
         # "dataset": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\datasets\qdataset_10_sub_15.csv",
         # "dataset_errors": r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qdataset\custom\qd-generation\tasks_backend_details.csv",
-        "dataset": r"D:\qsimpy-dev\qdataset\custom\datasets\qdataset_10_sub_15.csv",
+        "dataset": r"D:\qsimpy-dev\qdataset\custom\datasets\qdataset_1000_sub_26.csv",
         "dataset_errors": r"D:\qsimpy-dev\qdataset\custom\qd-generation\tasks_backend_details.csv",
 
     }
