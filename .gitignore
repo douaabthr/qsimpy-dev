@@ -3,8 +3,8 @@
 *.pyo
 __pycache__/
 
+.results/
 # SimPy
-qsimpy_env/
 .env
 .env.bak
 .env.*.bak

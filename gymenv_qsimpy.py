@@ -14,11 +14,13 @@ from numpy.random import default_rng
 from qsimpy import Broker, QTask, TaskStatus, IBMQNode, Dataset, Log
 import simpy
 import ast
+import os
+import re
 
 import pandas as pd
 class QSimPyEnv(gym.Env):
 
-    MAX_ROUNDS = 9  # maximum number of rounds in the QTask dataset
+    MAX_ROUNDS = 999  # maximum number of rounds in the QTask dataset
 
     """
     Gym environment for QSimPy.
@@ -65,8 +67,41 @@ class QSimPyEnv(gym.Env):
         # QTask attrributes = [arrivaltime, qt_qubits, cl]
         # QNode attributes = [qn_qubits, d1cps, next_available_time]
         # n_qtasks : cad le borker doit gerer cad placee 25 tach en meme temp 
-        self.n_qtasks = 15
-        self.n_qnodes = 5  # number of qnodes
+
+
+
+        #UPDATE N_QTASKS AND N_QNODES AUTOMATICALLY
+
+        # self.n_qtasks = 26
+        # Load QTasks dataset
+        if dataset is None:
+            raise ValueError("Dataset is not specified")
+        self.qtask_dataset = Dataset(dataset,dataset_errors)
+        # Extract filename
+        filename = os.path.basename(dataset)
+
+        # Extract number of qtasks using regex
+        match = re.search(r"qdataset_\d+_sub_(\d+)", filename)
+
+        if match:
+            self.n_qtasks = int(match.group(1))
+        else:
+            raise ValueError(f"Cannot extract n_qtasks from filename: {filename}")
+        
+
+
+        # self.n_qnodes = 5  # number of qnodes
+
+        self.qnode_names = [  
+            "washington",    #127
+            "brisbane",        #27
+            "cusco", #33
+            "kawasaki",         #7
+            "kyiv",   #65
+
+        ]
+        self.n_qnodes = len(self.qnode_names)
+
         self.qtasks = []
         self.qnodes = []
         self.mode = mode
@@ -103,13 +138,14 @@ class QSimPyEnv(gym.Env):
 
         self.action_space = Discrete(self.n_qnodes)
 
-        # Load QTasks dataset
-        if dataset is None:
-            raise ValueError("Dataset is not specified")
-        self.qtask_dataset = Dataset(dataset,dataset_errors)
+        
+        
         self.rng = default_rng(seed=22)
         # QSimPy environment
         self.qsp_env = simpy.Environment()
+
+
+       
         self.setup_quantum_resources()
 
         self.round = 1
@@ -121,7 +157,7 @@ class QSimPyEnv(gym.Env):
         self.rescheduling_time = 0.01
 
         # Check if evaluation is set
-        self.evaluation = config.get("evaluation", False)
+        self.evaluation = config.get("evaluation", True)
         self.policy = config.get("policy", "UnknownPolicy")
         
 
@@ -137,11 +173,11 @@ class QSimPyEnv(gym.Env):
             self.qtask_obs = np.array([0, 0, 0, 0], dtype=np.float32)
         else:
             self.qtask_obs = np.array([
-    float(self.current_qtask.arrival_time),
-    float(self.current_qtask.qubit_number),
-    float(self.current_qtask.circuit_layers),
-    float(self.current_qtask.rescheduling_count),
-], dtype=np.float32)
+            float(self.current_qtask.arrival_time),
+            float(self.current_qtask.qubit_number),
+            float(self.current_qtask.circuit_layers),
+            float(self.current_qtask.rescheduling_count),
+        ], dtype=np.float32)
 
         # Get the current observation of quantum nodes
         self.qnode_obs = []
@@ -164,17 +200,11 @@ class QSimPyEnv(gym.Env):
     def setup_quantum_resources(self):
         # Create a list of 10 IBM QNodes
         qnode_ids = range(self.n_qnodes)
-        qnode_names = [
-            "torino",   #133
-            "brisbane", #127
-            "washington",    #127
-            "hanoi",        #27
-            "perth",       #7
-
-        ]
+       
+        
         self.qnodes = [
             IBMQNode.create_ibmq_node(self.qsp_env, qid, qname)
-            for qid, qname in zip(qnode_ids, qnode_names)
+            for qid, qname in zip(qnode_ids, self.qnode_names)
         ]
 
         # Create a Broker
@@ -235,8 +265,10 @@ class QSimPyEnv(gym.Env):
             self.round_robin_index += 1
 
         qtask, waiting_time, execution_time = self.broker.preprocess_qtask(
-            qtask, self.qnodes[qnode_id]
+            qtask, self.qnodes[qnode_id],self.qtask_dataset
         )
+        if execution_time == 0.0 :
+            print("preprocess_qtask done",execution_time)
         if qtask.status == TaskStatus.ERROR:
             # Apply large penalty to the reward if QTask constraints are not satisfied
             # Beside, this task need to be rescheduled to another QNode until it can be executed
@@ -257,7 +289,7 @@ class QSimPyEnv(gym.Env):
         
         # Submit the qtask to the qnode following the action
         qtask_execution = self.broker.submit_qtask_to_qnode(
-            qtask, self.qnodes[qnode_id]
+            qtask, self.qnodes[qnode_id],self.qtask_dataset
         )
         self.qsp_env.process(qtask_execution)
         # Delay time is the time from initial arrival time to the time the task started to be placed in the QNode
@@ -265,12 +297,17 @@ class QSimPyEnv(gym.Env):
         
         # print(f"Estimated waiting time: {waiting_time}")
         # print(f"Estimated execution time: {execution_time}")
+        
         if qtask.gate_counts is None:
             fidelity = 0.0
         else:
             fidelity = self.qnodes[qnode_id].compute_fidelity(qtask, self.qtask_dataset)
         qtask.fidelity = fidelity
+
         Log.print_success(f"🔸 QTask {qtask.id}: Fidelity = {fidelity:.4f}")
+
+        reward = delay_time + waiting_time + execution_time
+
         self.results.append({
             'qtask_id': qtask.id,
             'qnode_id': qnode_id,
@@ -278,9 +315,12 @@ class QSimPyEnv(gym.Env):
             'execution_time': execution_time,
             'rescheduling_count': qtask.rescheduling_count,  # Store the actual count from the task
             'fidelity': fidelity,
-            'reward' :1 / (reward + 1e-6),
+            'reward' :(1 / (reward + 1e-6))+fidelity,
         })
-        reward = delay_time + waiting_time + execution_time
+        # print("delay_time:", delay_time)
+        # print("waiting_time:", waiting_time)
+        # print("execution_time:", execution_time)
+
         return reward, qtask.rescheduling_count,fidelity
 
     def reset(self, *, seed=None, options=None):
@@ -330,7 +370,7 @@ class QSimPyEnv(gym.Env):
         time_reward, _ ,fidelity= self.submit_task_to_qnode(
             self.current_qtask, action
         )
-        reward = 1 / (time_reward + 1e-6)
+        reward = (1 / (time_reward + 1e-6))+fidelity
 
 
         scheduled_qtask = self.current_qtask
@@ -361,6 +401,7 @@ class QSimPyEnv(gym.Env):
 
     def close(self):
         # If the evaluation is set, run the environment and export the results
+        print("Closing environment...",self.evaluation)
         if self.evaluation:
             Log.log = True
             self.qsp_env.run()
@@ -369,7 +410,6 @@ class QSimPyEnv(gym.Env):
             # Log.export_simulation_results(self.qnodes, output_file=self.policy)
         pass
     def save_results(self):
-    
         df = pd.DataFrame(self.results)
         df.to_csv(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv", mode='a', header=not os.path.exists(r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\results\custom\custom_results.csv"), index=False)
         print("✅ Results saved to results.csv")

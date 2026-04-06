@@ -3,7 +3,7 @@ from .QNode import QNode
 from qiskit_ibm_runtime.fake_provider import FakeProviderForBackendV2
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 import json 
-
+import os
 provider = FakeProviderForBackendV2()
 
 
@@ -37,6 +37,11 @@ ibmq_errors = {
     "quito": {"T1":63.85969141991406,"T2":77.11980413116734,"Frequency":5.05232582664422,"Anharmonicity":-0.3192628614050085,"Readout_assignment_error":0.042200000000000015,"Prob_meas0_prep1":0.042200000000000015,"Prob_meas1_prep0":0.0188,"Readout_length":5351.11111111111,"ID_error":0.0005524872081103501,"x(sx)error":0.0005524872081103501,"Pauli_X_error":0.0005524872081103501,"CNOT_error":"4_3:0.017119643645879645","Gate_time":"4_3:312.88888888888886"},
     "torino": {"T1":141.7488980388644,"T2":223.60730957229575,"Frequency":4.9542619068718485,"Anharmonicity":-0.3295357314028495,"Readout_assignment_error":0.02729999999999999	,"Prob_meas0_prep1":0.0418,"Prob_meas1_prep0":0.012800000000000034	,"Readout_length":3576.8888888888887,"ID_error":0.00023166833496968313,"x(sx)error":0.00023166833496968313,"Pauli_X_error":0.00023166833496968313,"CNOT_error":"26_25:0.005029354747813297","Gate_time":"26_25:312.88888888888886"},
     "brisbane": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
+    "prague": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
+    "brooklyn": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
+    "cusco": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
+    "kawasaki": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
+    "kyiv": {"T1":82.03732654706876,"T2":149.9589443726645	,"Frequency":5.258463185890278,"Anharmonicity":-0.3313451432371279,"Readout_assignment_error":0.018399999999999972,"Prob_meas0_prep1":0.02639999999999998,"Prob_meas1_prep0":0.0104,"Readout_length":6158.222222222222,"ID_error":0.0004875682649286228,"x(sx)error":0.0004875682649286228,"Pauli_X_error":0.0004875682649286228,"CNOT_error":"4_3:0.0107592100363047","Gate_time":"4_3:490.66666666666663"},
 
 }
 
@@ -55,10 +60,21 @@ ibmq_systems = {
     "belem": {"qubits": 5, "qv": 16, "clops": 2500},
     "lima": {"qubits": 5, "qv": 8, "clops": 2700},
     "quito": {"qubits": 5, "qv": 16, "clops": 1500},
+    "prague": {"qubits": 5, "qv": 16, "clops": 1500},
+    "brooklyn": {"qubits": 5, "qv": 16, "clops": 1500},
+    "kyiv": {"qubits": 5, "qv": 16, "clops": 1500},
+    "kawasaki": {"qubits": 5, "qv": 16, "clops": 1500},
+    "cusco": {"qubits": 5, "qv": 16, "clops": 1500},
+    "brisbane": {"qubits": 5, "qv": 16, "clops": 1500},
+
 }
 
-CALIBRATION_PATH = r"D:\Study\Master\master2\semstre3\PFE\tools\qsimpy_dev\qsimpy\qsimpy\resources\backend_calibration_data.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+CALIBRATION_PATH = os.path.join(
+    BASE_DIR,
+    "backend_calibration_data.json"
+)
 def create_ibmq_node(env, id: int, backend_name: str):
     """
     Create an IBMQ node.
@@ -107,7 +123,7 @@ def create_ibmq_node(env, id: int, backend_name: str):
     ibmq_node.qnode_model = "ibmq" + str(ibmq_node.qubit_number)
 
     ibmq_node.qnode_name = backend_name
-
+    
    
     ibmq_node.error = ibmq_errors[backend_name]    ## LAZEM NBDLOU HADI 
     return ibmq_node

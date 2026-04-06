@@ -3,8 +3,7 @@ import os
 from datetime import datetime, timedelta
 
 class Log:
-    log = False
-
+    log = True  # Set to False to disable logging
     @staticmethod
     def format_time(env_now):
         hours = int(env_now // 3600)

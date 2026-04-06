@@ -22,8 +22,8 @@ def create_sub_dataset(df, target_depth, tolerance, num_circuits):
 
 
 # Adjustable parameters
-num_subsets = 10  # Number of subsets to create
-num_circuits = 15  # Number of circuits in each subset
+num_subsets = 100  # Number of subsets to create
+num_circuits = 26  # Number of circuits in each subset
 average_depth = (
     df["original_depth"].sum() // len(df) * num_circuits
 )  # Average total depth for 'num_circuits' circuits

@@ -21,7 +21,7 @@ class Broker:
         """Return the time until the task's arrival time."""
         return max(0, qtask.arrival_time - self.env.now)
  
-    def preprocess_qtask(self, qtask, qnode):
+    def preprocess_qtask(self, qtask, qnode,data_set):
         # Check the constraints of the QTask
         # print("DEBUG qtask:", qtask)
         qtask.qnode = qnode
@@ -45,16 +45,17 @@ class Broker:
         else:
             # If qiskit_backend is set, transpile the task
             if qnode.qiskit_backend:
-                qtask.circuit_layers = qnode.transpile_task(qtask,self.mode)
+                qtask.circuit_layers = qnode.transpile_task(qtask,data_set,self.mode)
             # Get estimated waiting time and execution time
-            estimated_waiting_time = qnode.get_estimated_waiting_time(qtask,self.mode)
-            estimated_execution_time = qnode.get_estimated_execution_time(qtask,self.mode)
+            estimated_waiting_time = qnode.get_estimated_waiting_time(qtask,data_set,self.mode)
+            estimated_execution_time = qnode.get_estimated_execution_time(qtask,data_set,self.mode)
+            # print(f"Estimated waiting time: {estimated_waiting_time}s, Estimated execution time: {estimated_execution_time}s")
             qtask.waiting_time = estimated_waiting_time
             qtask.execution_time = estimated_execution_time
         return qtask, estimated_waiting_time, estimated_execution_time
     
 
-    def submit_qtask_to_qnode(self, qtask, qnode):
+    def submit_qtask_to_qnode(self, qtask, qnode,data_set):
         """Submit a quantum task to a quantum node."""
         # Wait for the task's arrival time
         yield self.env.timeout(self.time_until_task_arrival(qtask))
@@ -70,7 +71,7 @@ class Broker:
                 self.env.now,
                 f"⏩️ QTask {qtask.id} arrived at QNode {qnode.id}, estimated execution time {qtask.execution_time}s",
             )
-            yield self.env.process(qnode.process_task(qtask))
+            yield self.env.process(qnode.process_task(qtask,data_set,self.mode))
 
         qtask.finish_time = self.env.now
         return qtask.waiting_time + qtask.execution_time
